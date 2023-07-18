@@ -18,7 +18,7 @@ export default function SignIn() {
     const loadGoogleSignIn = () => {
       /* global google */
       google.accounts.id.initialize({
-        client_id: '1039453106534-rmeg7t7ndpkddniqin3n1gs0davd58le.apps.googleusercontent.com',
+        client_id: process.env.REACT_APP_CLIENT_ID,
         callback: responseSuccessGoogle
       });
 

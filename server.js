@@ -1,8 +1,8 @@
-
 const express = require('express');
 const dotenv = require('dotenv');
 const mongoConnection = require("./config/db");
 const userRouter = require('./routes/userRoute');
+const blogRouter = require('./routes/blogRoute')
 const cors = require('cors')
 dotenv.config()
 mongoConnection();
@@ -33,8 +33,10 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use('/api',userRouter)
+app.use('/api',blogRouter)
 
 app.listen(PORT, () => {
   console.log(`running on ${PORT}`);

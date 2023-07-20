@@ -55,12 +55,12 @@ export default function GetAllBlogs() {
           return (
               <div class="card">
                   <div class="swiper-container">
-                      <div onClick={() => { pre(index) }}><i class="fas fa-chevron-left" style={{ cursor: 'pointer' }} /></div> 
+                    {i.images.length > 1 &&  (<div onClick={() => { pre(index) }}><i class="fas fa-chevron-left" style={{ cursor: 'pointer' }} /></div> )}
                       <div style={{display:'flex'}}>
                           <img key={i._id} src={i.images[i.currentIndex]} alt="" style={{ height: 'auto', width: '100%', objectFit: 'contain'}} />
                           
                       </div>
-                      <div onClick={() => { next(index) }}><i class="fas fa-chevron-right" style={{ cursor: 'pointer' }} /></div>  
+                      {i.images.length > 1 && (<div onClick={() => { next(index) }}><i class="fas fa-chevron-right" style={{ cursor: 'pointer' }} /></div>)} 
                   </div>
                   <h2 class="card-title">{i.title}</h2>
                   <p class="card-description">{i.description}</p>

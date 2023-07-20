@@ -11,10 +11,6 @@ export default function Blog() {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('userId'));
 
-    useEffect(() => {
-        getAllBlogController();
-    }, []);
-
     const handleInputChange = (e) => {
         if (e.target.name === 'title') {
             setTitle(e.target.value);
@@ -62,23 +58,6 @@ export default function Blog() {
             });
     };
 
-    const getAllBlogController = () => {
-        axios
-            .get(`${backendURL}/api/get-blog`, {
-                headers: {
-                    Authorization: token,
-                },
-            })
-            .then((res) => {
-                console.log(res.data);
-                setBlogArray(res.data.allBlogs);
-            })
-            .catch((error) => {
-                toast.error(error.response.data.message);
-                console.log(error);
-            });
-    };
-
     return (
         <form onSubmit={handleSubmit}>
             <ToastContainer />
@@ -100,13 +79,6 @@ export default function Blog() {
                 ))}
             </div>
             <button type="submit">Submit</button>
-            {blogArray.map((i) => {
-                return (
-                    i.images.map((t)=>{
-                        return (<img key={i._id} src={t} alt="" />)
-                    })
-                )
-            })}
         </form>
     );
 }

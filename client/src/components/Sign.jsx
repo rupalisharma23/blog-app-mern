@@ -57,9 +57,7 @@ export default function SignIn() {
   };
 
   const responseSuccessGoogle = (response) => {
-    console.log(response.credential);
     var userObject = jwt_decode(response.credential);
-    console.log(userObject);
     setUser(userObject);
     axios.post(`${backendURL}/api/register`, { name: response.credential.name, email: response.credential.email })
       .then((res) => {

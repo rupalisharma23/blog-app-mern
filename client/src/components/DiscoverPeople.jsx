@@ -13,7 +13,7 @@ export default function DiscoverPeople() {
         getAllUsers();
     }, []);
 
-    const getAllUsers = () => {
+    const getAllUsers = () => {       
         axios
             .get(`${backendURL}/api/blog-users/${user._id}`, {
                 headers: {
@@ -40,6 +40,8 @@ export default function DiscoverPeople() {
                 Authorization: token,
             },
         }).then((res) => {
+            let temp = users.filter((i) => { return i._id !== userDetail._id })
+            setUsers(temp)
             toast.error(res.data.message);
         })
             .catch((error) => {

@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 
 router.post("/create-blog", requireSignIn, createBlogController);
-router.get("/get-blog", requireSignIn, getAllBlogController);
+router.get("/get-blog/:_id", requireSignIn, getAllBlogController);
 router.get("/single-blog/:_id", requireSignIn, getSingleBlog);
 router.post("/single-blog/:_id", requireSignIn, editSingleBlog);
 router.delete("/single-blog/:_id", requireSignIn, deleteSingleBlog);

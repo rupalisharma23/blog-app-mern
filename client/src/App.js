@@ -7,6 +7,8 @@ import Blog from './components/Blog';
 import GetAllBlogs from './components/GetAllBlogs';
 import UpdateBlog from './components/UpdateBlog';
 import PersonalBlogs from './components/PersonalBlogs';
+import DiscoverPeople from './components/DiscoverPeople';
+import FollowRequest from './components/FollowRequest';
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Route path="/allBlogs" element={<GetAllBlogs />} />
         <Route path="/single-blog/:_id" element={<UpdateBlog />} />
         <Route path="/PersonalBlogs" element={<PersonalBlogs />} />
+        <Route path="/discover" element={<DiscoverPeople />} />
+        <Route path="/follow-request" element={<FollowRequest />} />
       </Routes>
     </>
   );

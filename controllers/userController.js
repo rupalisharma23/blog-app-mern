@@ -31,7 +31,9 @@ const SignIn = async(req,res) =>{
 const login = async(req,res) =>{
     try{
           const {email, password} = req.body
-          const userExist = await User.findOne({email})
+          const userExist = await User.findOne({ email }).populate({
+            path: "frineds",
+          });
           if(!userExist){
             return res.status(400).send({message:'user not found'})
           }

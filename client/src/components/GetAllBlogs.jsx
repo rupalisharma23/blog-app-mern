@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 export default function GetAllBlogs() {
     const [blogArray, setBlogArray] = useState([]);
     const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('userId'));
     const navigate = useNavigate();
     useEffect(() => {
         getAllBlogController();
@@ -16,7 +17,7 @@ export default function GetAllBlogs() {
     
     const getAllBlogController = () => {
         axios
-            .get(`${backendURL}/api/get-blog`, {
+            .get(`${backendURL}/api/get-blog/${user._id}`,{
                 headers: {
                     Authorization: token,
                 },

@@ -1,4 +1,5 @@
 const blog = require('../models/blogModel');
+const User = require("../models/user");
 
 const createBlogController = async(req,res) =>{
     try{
@@ -14,8 +15,12 @@ const createBlogController = async(req,res) =>{
 
 const getAllBlogController = async(req,res) =>{
     try{
-
-        const allBlogs = await blog.find({}).populate({ path: "userId" , select:{password:0}}).sort({createdAt:-1});
+        const friendsOfUser = await User.findOne({ _id: req.params._id });
+        const friendsList = friendsOfUser.frineds.map((friend) => {
+          return friend._id;
+        });
+        let newArray = [...friendsList];
+        const allBlogs = await blog.find({userId:{$in:newArray}}).populate({ path: "userId" , select:{password:0}}).sort({createdAt:-1});
         res.status(200).send({allBlogs})
 
     }catch(error){

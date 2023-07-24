@@ -1,5 +1,5 @@
 const {requireSignIn} = require('../middleware/authMiddleware');
-const {createBlogController,getAllBlogController,getSingleBlog,editSingleBlog,deleteSingleBlog,getPersonalBlogController} = require('../controllers/blogController')
+const {createBlogController,getAllBlogController,getSingleBlog,editSingleBlog,deleteSingleBlog,getPersonalBlogController,addComments,deleteComment} = require('../controllers/blogController')
 const express = require('express');
 const router = express.Router();
 
@@ -9,5 +9,7 @@ router.get("/single-blog/:_id", requireSignIn, getSingleBlog);
 router.post("/single-blog/:_id", requireSignIn, editSingleBlog);
 router.delete("/single-blog/:_id", requireSignIn, deleteSingleBlog);
 router.get("/personal-blog/:_id", requireSignIn, getPersonalBlogController);
+router.post("/add-comments/:_id",requireSignIn,addComments)
+router.post("/delete-comments",requireSignIn,deleteComment)
 
 module.exports = router

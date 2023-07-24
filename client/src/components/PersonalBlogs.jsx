@@ -69,6 +69,20 @@ export default function PersonalBlogs() {
         console.log(error);
       });
   }
+  
+  const deleteComment = (blogId, _id) =>{
+    return axios.post(`${backendURL}/api/delete-comments`,{
+        blogId, _id
+    },{
+        headers:{
+            Authorization: token,
+        }
+    }).then((res)=>{
+        toast.success('comment added')
+    }).catch((error)=>{
+        console.log(error)
+    })
+}
   return (
     <div>
       <ToastContainer />
@@ -87,7 +101,15 @@ export default function PersonalBlogs() {
           <p class="card-description">{i.description}</p>
           <p class="card-description" onClick={() => { navigate(`/single-blog/${i._id}`) }} >edit</p>
           <p class="card-description" onClick={() => { deleteBlog(i._id) }} >delete</p>
-
+          {i.comments.sort((a, b) => new Date(b?.createdAt) - new Date(a?.createdAt)).map((comment)=>{
+                    return(
+                        <div style={{border:'1px solid'}}>
+                            <div onClick={()=>{navigate(`/user-profile/${comment.userId}`)}} >{comment.email}</div>
+                            <div>{comment.comment}</div>
+                           {(i.userId._id == user._id || comment.userId == user._id) &&  <button onClick={()=>{deleteComment(i._id,comment._id)}} >delete</button>}
+                        </div>
+                    )
+                  })}
         </div>
       )
     })}

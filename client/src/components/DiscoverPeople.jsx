@@ -3,11 +3,13 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import backendURL from './config';
 import './blogs.css';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function DiscoverPeople() {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('userId'));
-    const [users,setUsers] = useState([])
+    const [users,setUsers] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         getAllUsers();
@@ -55,7 +57,7 @@ export default function DiscoverPeople() {
         {users.map((user)=>{
             return(
                 <div>
-                    <div>{user.name}</div>
+                    <div onClick={()=>{navigate(`/user-profile/${user._id}`)}}>{user.name}</div>
                     <div>{user.email}</div>
                     <button onClick={()=>{sendRequest(user)}}>follow</button>
                 </div>

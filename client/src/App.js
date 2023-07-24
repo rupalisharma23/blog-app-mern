@@ -8,6 +8,7 @@ import GetAllBlogs from './components/GetAllBlogs';
 import UpdateBlog from './components/UpdateBlog';
 import PersonalBlogs from './components/PersonalBlogs';
 import DiscoverPeople from './components/DiscoverPeople';
+import UserProfile from './components/UserProfile'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/single-blog/:_id" element={<UpdateBlog />} />
         <Route path="/PersonalBlogs" element={<PersonalBlogs />} />
         <Route path="/discover" element={<DiscoverPeople />} />
+        <Route path="/user-profile/:_id" element={<UserProfile />} />
       </Routes>
     </>
   );

@@ -75,4 +75,32 @@ const getPersonalBlogController = async (req, res) => {
   }
 };
 
-module.exports = { createBlogController, getAllBlogController, getSingleBlog,editSingleBlog,deleteSingleBlog,getPersonalBlogController };
+const addComments = async(req,res) =>{
+  try{
+
+    const {_id} = req.params
+    const blogs = await blog.findOneAndUpdate({_id},{$push:{comments:req.body}}, {new:true});
+    res.status(200).send({message:'comment added', blogs})
+
+  } catch(error){
+
+    console.log('error in addcommenst', error);
+    res.status(400).send({error:error})
+
+  }
+} 
+
+const deleteComment = async(req,res) =>{
+  try{
+
+    const {blogId, _id} = req.body
+    const blogDelete = await blog.findOneAndUpdate({_id:blogId},{$pull:{comments:{_id}}},{new:true})
+    res.status(200).send({message:'comment deleted', blogDelete})
+
+  }catch(error){
+    console.log('error in deleteComment', error)
+    res.status(400).send({error})
+  }
+}
+
+module.exports = { createBlogController, getAllBlogController, getSingleBlog,editSingleBlog,deleteSingleBlog,getPersonalBlogController,addComments,deleteComment };

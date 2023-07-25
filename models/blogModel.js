@@ -19,6 +19,19 @@ const CommentSchema = new Schema(
   { timestamps: true }
 );
 
+const likeSchema = new Schema(
+  {
+    userId: {
+      type: mongoose.ObjectId,
+      ref: "users",
+      required: true,
+    },
+    email:{
+      type:String
+    }
+  }
+);
+
 const BlogSchema = new Schema(
   {
     userId: {
@@ -39,7 +52,11 @@ const BlogSchema = new Schema(
         required: true,
       },
     ],
-    comments:[CommentSchema]
+    comments:[CommentSchema],
+    likes:[likeSchema],
+    isBlockLiked:{
+      type:Boolean
+    }
   },
   { timestamps: true }
 );

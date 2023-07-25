@@ -103,4 +103,24 @@ const deleteComment = async(req,res) =>{
   }
 }
 
-module.exports = { createBlogController, getAllBlogController, getSingleBlog,editSingleBlog,deleteSingleBlog,getPersonalBlogController,addComments,deleteComment };
+const likeController = async(req,res) =>{
+  try{
+    const {_id} = req.params
+    const {userId} = req.body
+    const blogs = await blog.findOne({_id,likes: { $elemMatch: { userId: userId } }});
+    if(blogs){
+      const dislike = await blog.findOneAndUpdate({_id},{$pull:{likes:{userId}}}, {new:true})
+      res.status(200).send({message:'disliked'})
+    }
+    else{
+      const like = await blog.findOneAndUpdate({_id},{$push:{likes:req.body}}, {new:true})
+      res.status(200).send({message:'liked'})
+    }
+  }
+  catch(error){
+    console.log('error in likeController', error);
+    res.status(400).send({error})
+  }
+}
+
+module.exports = { createBlogController, getAllBlogController, getSingleBlog,editSingleBlog,deleteSingleBlog,getPersonalBlogController,addComments,deleteComment,likeController };

@@ -80,8 +80,6 @@ export default function GetAllBlogs() {
       });
   };
 
-  console.log(blogArray);
-
   const like = (_id, index) => {
     let temp = [...blogArray];
     let likes = {

@@ -38,6 +38,7 @@ export default function Login() {
                 </div>
                 <button type="submit">login</button>
             </form>
+            <a href="#/fogot-password">forget password</a>
         </div>
     )
 }

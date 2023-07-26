@@ -105,8 +105,6 @@ export default function SignIn() {
             </div>
           )}
         </form>
-        
-          
         <button type="submit" onClick={handleLogout}>logout</button>
       </div>
     </div>

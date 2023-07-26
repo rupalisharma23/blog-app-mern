@@ -8,7 +8,9 @@ import GetAllBlogs from './components/GetAllBlogs';
 import UpdateBlog from './components/UpdateBlog';
 import PersonalBlogs from './components/PersonalBlogs';
 import DiscoverPeople from './components/DiscoverPeople';
-import UserProfile from './components/UserProfile'
+import UserProfile from './components/UserProfile';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
         <Route path="/PersonalBlogs" element={<PersonalBlogs />} />
         <Route path="/discover" element={<DiscoverPeople />} />
         <Route path="/user-profile/:_id" element={<UserProfile />} />
+        <Route path="/fogot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:_id/:token" element={<ResetPassword />} />
       </Routes>
     </>
   );

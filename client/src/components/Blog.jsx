@@ -47,7 +47,6 @@ export default function Blog() {
             )
             .then((res) => {
                 toast.success('Blog created successfully');
-                // Reset form fields
                 setTitle('');
                 setDescription('');
                 setImages([]);

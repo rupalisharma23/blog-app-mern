@@ -59,15 +59,22 @@ export default function SignIn() {
   const responseSuccessGoogle = (response) => {
     var userObject = jwt_decode(response.credential);
     setUser(userObject);
-    axios.post(`${backendURL}/api/register`, { name: response.credential.name, email: response.credential.email })
+    axios.post(`${backendURL}/api/register/google`, { name: userObject.name, email: userObject.email, email_verified: userObject.email_verified })
       .then((res) => {
         toast.success('User created');
+        localStorage.setItem('userId', JSON.stringify(res.data.newUser))
+        localStorage.setItem('token', res.data.token)
+        navigate('/Blogs')
         document.getElementById('signInDiv').hidden = true;
       })
       .catch((error) => {
         toast.error(error.response.data.message);
         console.log(error);
       });
+  };
+
+  const handleLogout = () => {
+    localStorage.clear(); // Clear user data from local storage
   };
 
   return (
@@ -98,6 +105,9 @@ export default function SignIn() {
             </div>
           )}
         </form>
+        
+          
+        <button type="submit" onClick={handleLogout}>logout</button>
       </div>
     </div>
   );

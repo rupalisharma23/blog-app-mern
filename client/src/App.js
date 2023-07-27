@@ -11,6 +11,7 @@ import DiscoverPeople from './components/DiscoverPeople';
 import UserProfile from './components/UserProfile';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
+import UpdateProfile from './components/UpdateProfile';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/user-profile/:_id" element={<UserProfile />} />
         <Route path="/fogot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:_id/:token" element={<ResetPassword />} />
+        <Route path="/update-profile" element={<UpdateProfile />} />
       </Routes>
     </>
   );

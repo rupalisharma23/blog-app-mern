@@ -11,6 +11,8 @@ export default function SignIn() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [profile, setProfile] = useState('');
+  const [cover, setCover] = useState('');
   const [user, setUser] = useState({});
   const navigate = useNavigate();
 
@@ -42,10 +44,29 @@ export default function SignIn() {
     }
   }, []);
 
+  const handleInputChange = (e) => {
+    if (e.target.name === 'profile') {
+        const selectedImages = e.target.files[0]
+            const reader = new FileReader();
+            reader.readAsDataURL(selectedImages);
+            reader.onload = () => {
+               setProfile(reader.result)
+            }
+    }
+   else if (e.target.name === 'cover') {
+        const selectedImages = e.target.files[0]
+            const reader = new FileReader();
+            reader.readAsDataURL(selectedImages);
+            reader.onload = () => {
+               setCover(reader.result)
+            }
+    }
+};
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    axios.post(`${backendURL}/api/register`, { name, email, password })
+    axios.post(`${backendURL}/api/register`, { name, email, password, profile, cover })
       .then((res) => {
         toast.success('User created');
         navigate('/login');
@@ -59,7 +80,7 @@ export default function SignIn() {
   const responseSuccessGoogle = (response) => {
     var userObject = jwt_decode(response.credential);
     setUser(userObject);
-    axios.post(`${backendURL}/api/register/google`, { name: userObject.name, email: userObject.email, email_verified: userObject.email_verified })
+    axios.post(`${backendURL}/api/register/google`, { name: userObject.name, email: userObject.email, email_verified: userObject.email_verified, profile:userObject.picture })
       .then((res) => {
         toast.success('User created');
         localStorage.setItem('userId', JSON.stringify(res.data.newUser))
@@ -95,6 +116,16 @@ export default function SignIn() {
             <label htmlFor="password">Password:</label>
             <input type="password" id="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
+          <div>
+                <label htmlFor="images">profile:</label>
+                <input type="file" id="images" name="profile" accept="image/*"  onChange={handleInputChange}  />
+            </div>
+            <div>
+                <label htmlFor="images">cover</label>
+                <input type="file" id="images" name="cover" accept="image/*"  onChange={handleInputChange} />
+            </div>
+           { profile && <img src={profile} alt="" style={{height:'200px', width:'200px', objectFit:'contain', borderRadius:'50%'}} />}
+           { cover && <img src={cover} alt="" style={{height:'200px', width:'200px', objectFit:'contain'}} />}
           <button type="submit">Sign In</button>
           <button onClick={() => { navigate('/login'); }}>Login</button>
           <div id="signInDiv"></div>

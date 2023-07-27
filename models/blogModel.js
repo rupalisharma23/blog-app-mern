@@ -14,6 +14,10 @@ const CommentSchema = new Schema(
     comment: {
       type: String,
       required: true,
+    },
+    profile:{
+      type:String,
+      default:''
     }
   },
   { timestamps: true }
@@ -28,6 +32,10 @@ const likeSchema = new Schema(
     },
     email:{
       type:String
+    },
+    profile:{
+      type:String,
+      default:''
     }
   }
 );

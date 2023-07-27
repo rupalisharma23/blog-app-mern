@@ -5,7 +5,7 @@ var nodemailer = require('nodemailer');
 
 const SignIn = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, profile, cover } = req.body;
     const userExist = await User.findOne({ email });
 
     if (userExist) {
@@ -16,6 +16,8 @@ const SignIn = async (req, res) => {
         name: name,
         email: email,
         password: hashedPassword,
+        profile:profile,
+        cover:cover
       });
       res.status(200).send({ message: "user created", newUser });
     }
@@ -27,8 +29,10 @@ const SignIn = async (req, res) => {
 
 const SignInGoogle = async (req, res) => {
   try {
-    const { name, email, email_verified } = req.body;
-    const userExist = await User.findOne({ email });
+    const { name, email, email_verified, profile } = req.body;
+    const userExist = await User.findOne({ email }).populate({
+      path: "frineds",
+    });
 
     if (userExist) {
       console.log(userExist);
@@ -44,6 +48,7 @@ const SignInGoogle = async (req, res) => {
         const newUser = await User.create({
           name: name,
           email: email,
+          profile:profile
         });
         const userExist = await User.findOne({ email });
         const token = await jwt.sign(
@@ -100,7 +105,7 @@ const forgotPassword = async(req,res) =>{
         service: 'gmail',
         auth: {
           user: 'ankitjha302000@gmail.com',
-          pass: 'fkcsefndbbadjnwx'
+          pass: process.env.PASSWORD_MAIL
         }
       });
       
@@ -145,4 +150,18 @@ const resetPassword = async(req,res) =>{
   }
 }
 
-module.exports = { SignIn, login, SignInGoogle,forgotPassword,resetPassword };
+const updateProfile = async(req,res) =>{
+  try{
+    const {_id} = req.params
+    const {name, profile, cover} = req.body
+
+    const userExist = await User.findOneAndUpdate({_id},{$set:{name, profile,cover}},{new:true})
+    res.status(200).send({message:'info updated'})
+
+  }catch(error){
+    console.log('error in updateProfile', error);
+    res.status(400).send({error})
+  }
+}
+
+module.exports = { SignIn, login, SignInGoogle,forgotPassword,resetPassword,updateProfile };

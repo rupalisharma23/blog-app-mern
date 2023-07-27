@@ -44,6 +44,7 @@ export default function GetAllBlogs() {
       email: user.email,
       userId: user._id,
       comment: value,
+      profile:user.profile
     };
     return axios
       .post(`${backendURL}/api/add-comments/${_id}`, comments, {
@@ -85,6 +86,7 @@ export default function GetAllBlogs() {
     let likes = {
       email: user.email,
       userId: user._id,
+      profile:user.profile
     };
     if (
       temp[index].likes.filter((i) => {
@@ -189,7 +191,7 @@ export default function GetAllBlogs() {
               .map((comment) => {
                 return (
                   <div style={{ border: "1px solid" }}>
-                    <div
+                  <img src={comment.profile} style={{height:'50px', width:'50px', borderRadius:'50%'}} alt="" />  <div
                       onClick={() => {
                         navigate(`/user-profile/${comment.userId}`);
                       }}
@@ -249,7 +251,8 @@ export default function GetAllBlogs() {
             </button>
             <div>people who liked</div>
             {i.likes.map((like) => {
-              return <div>{like.email}</div>;
+              return <div>
+               <img src={like.profile} style={{height:'50px', width:'50px', borderRadius:'50%'}} alt="" /> {like.email}</div>;
             })}
           </div>
         );

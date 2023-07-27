@@ -20,6 +20,14 @@ const UserSchema = new Schema({
       ref: "users"
     },
   ],
+  profile:{
+    type:String,
+    default:''
+  },
+  cover:{
+    type:String,
+    default:''
+  }
 });
 
 module.exports = mongoose.model("users", UserSchema);

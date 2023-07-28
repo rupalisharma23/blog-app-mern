@@ -1,3 +1,6 @@
+
+  @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;500&display=swap');
+
 .App {
   text-align: center;
 }
@@ -26,6 +29,252 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.light-theme{
+  --text-color: black;
+  --background-color: white;
+  --theme-blue: #26C6DA;
+  --font-theme: 'Roboto Slab', serif;
+  --font-bold: 500;
+  --font-light: 300;
+  --font-large-size:25px;
+  --font-small-size:15px;
+  --font-medium-size:20px;
+  --font-xl-size:40px;
+  --button-color-theme:#FFD1DA
+}
+
+.dark-theme{
+  --text-color: white;
+  --background-color : black;
+  --theme-blue: #26C6DA;
+  --font-theme: 'Roboto Slab', serif;
+  --font-bold: 500;
+  --font-light: 300;
+  --font-large-size:25px;
+  --font-small-size:15px;
+  --font-medium-size:20px;
+  --font-xl-size:40px;
+  --button-color-theme:#FFD1DA
+}
+
+.signInContainer{
+  height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.singinContiner1{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  padding: 1rem;
+}
+
+.loginContiner1{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  padding: 1rem;
+  width: 30%;
+}
+
+.verticalAlign{
+  display: flex;
+    flex-direction: column;
+}
+
+.formContainer{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inputDesign{
+  height: 2rem;
+  border-radius: 5px;
+  border: 2px solid var(--theme-blue);
+  font-family: var(--font-theme);
+  font-size: var(--font-small-size);
+}
+
+.verticalAlign label{
+  font-family: var(--font-theme);
+  font-size: var(--font-large-size);
+  font-weight: var(--font-bold);
+}
+
+.singinContiner1 h2{
+  font-family: var(--font-theme);
+  font-size: var(--font-xl-size);
+  font-weight: var(--font-bold);
+  margin: 0;
+}
+
+.loginContiner1 h2{
+  font-family: var(--font-theme);
+  font-size: var(--font-xl-size);
+  font-weight: var(--font-bold);
+  margin: 0;
+  margin-bottom: 1rem;
+}
+
+.upload{
+  position: relative;
+  margin-top: -55px;
+  background: white;
+  border-radius: 50%;
+}
+
+.coverImagClass{
+  width: 100%;
+  object-fit: cover;
+  height: 50%;
+  height: 150px;
+  cursor: pointer;
+}
+
+.upload .round{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  line-height: 33px;
+  overflow: hidden;
+  text-align: center;
+  border-radius: 50%;
+  background-color: var(--theme-blue);
+}
+
+.upload .round input[type='file']{
+  position: absolute;
+  transform: scale(2);
+  opacity: 0;
+}
+
+input[type='file']::-webkit-file-upload-button{
+  cursor: pointer;
+}
+
+.upload img{
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+  object-fit: contain;
+  border: 1px solid var(--theme-blue);
+}
+
+.singInButton{
+  padding: 1rem;
+  border-radius: 5px;
+  border: none;
+  font-family: var(--font-theme);
+  font-size: var(--font-large-size);
+  font-weight: var(--font-bold);
+  background-color: var(--button-color-theme);
+  cursor: pointer;
+}
+
+.alreadyUser{
+  text-align: center;
+    font-size: var(--font-medium-size);
+    font-family: var(--font-theme);
+    font-weight: var(--font-light);
+}
+
+.horizontalAlign{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.horizontalAlign img{
+  height: 100px;
+  width: 100px;
+  object-fit: contain;
+  border: 1px solid var(--theme-blue);
+}
+
+.blogContiner1{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  padding: 1rem;
+  width: 90%;
+  background: white;
+  height: fit-content;
+}
+
+.blogFirstContainer{
+  height: 100vh;
+  width: 30%;
+  display: flex;
+  justify-content: center;
+}
+
+.following{
+  width: 50%;
+  text-align: center;
+  border-right: 2px solid var(--theme-blue);
+  font-size: var(--font-medium-size);
+    font-family: var(--font-theme);
+}
+
+.friends_design{
+  font-family: var(--font-theme);
+  font-size: var(--font-small-size);
+  font-weight: var(--font-bold);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 80%;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+
+.friends_design img{
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  border: 1.5px solid var(--theme-blue);
+}
+
+@media (max-width:1200px){
+  .loginContiner1{
+    width: 50%;
+  }
+}
+
+@media (max-width:700px){
+  .loginContiner1{
+    width: 80%;
+  }
+  .verticalAlign label{
+    font-size: var(--font-small-size);
+  }
+
+  .loginContiner1 h2{
+    font-size: var(--font-large-size);
+  }
+  .singinContiner1 h2{
+    font-size: var(--font-large-size);
+  }
+
+  .singInButton{
+    font-size: var(--font-small-size);
+  }
+
+  .alreadyUser{
+    font-size: var(--font-small-size);
+  }
 }
 
 @keyframes App-logo-spin {

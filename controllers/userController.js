@@ -70,8 +70,10 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const userExist = await User.findOne({ email }).populate({
-      path: "frineds",
-    });
+      path: "frineds"
+    }).populate({
+       path:"follower"
+    })
     if (!userExist) {
       return res.status(400).send({ message: "user not found" });
     }

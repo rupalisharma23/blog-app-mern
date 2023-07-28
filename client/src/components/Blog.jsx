@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import backendURL from './config';
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 
 export default function Blog() {
     const [title, setTitle] = useState('');
@@ -57,27 +58,38 @@ export default function Blog() {
             });
     };
 
+    const removeImage = (index) =>{
+        setImages(images.filter((i,index1)=>{ return index1!==index}))
+    }
+
     return (
-        <form onSubmit={handleSubmit}>
+        <div className="signInContainer">
+            <div className="loginContiner1">
+                <h2>create post</h2>
+            <form className="formContainer" onSubmit={handleSubmit}>
             <ToastContainer />
-            <div>
+            <div className="verticalAlign">
                 <label htmlFor="title">Title:</label>
-                <input type="text" id="title" name="title" value={title} onChange={handleInputChange} required />
+                <input className="inputDesign" type="text" id="title" name="title" value={title} onChange={handleInputChange} required />
             </div>
-            <div>
+            <div className="verticalAlign">
                 <label htmlFor="description">Description:</label>
-                <textarea id="description" name="description" value={description} onChange={handleInputChange} required />
+                <textarea className="inputDesign" style={{height:'5rem'}} id="description" name="description" value={description} onChange={handleInputChange} required />
             </div>
-            <div>
-                <label htmlFor="images">Images:</label>
-                <input type="file" id="images" name="images" accept="image/*" multiple onChange={handleInputChange} required />
+            <div className="verticalAlign">
+                <label style={{fontSize:'15px'}} htmlFor="images"><AddPhotoAlternateIcon style={{height:'2rem', width:'2rem', cursor:'pointer'}}/> {images.length>0 && <div>{`${images.length} selected`}</div>} </label>
+                <input  style={{display:'none'}}  type="file" id="images" name="images" accept="image/*" multiple onChange={handleInputChange}  />
             </div>
-            <div>
+            <div className="horizontalAlign">
                 {images.map((image, index) => (
-                    <img key={index} src={image} alt={`Image ${index}`} />
+                   <div style={{position:'relative'}}> <img key={index} src={image} alt={`Image ${index}`} /> <div style={{position:'absolute', top:'-10px', right:'-5px', cursor:'pointer'}} onClick={()=>{removeImage(index)}} > <i className='fa fa-times'></i> </div> </div>
                 ))}
             </div>
-            <button type="submit">Submit</button>
+            <button className="singInButton" type="submit">Submit</button>
         </form>
+            </div>
+           
+        </div>
+        
     );
 }

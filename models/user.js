@@ -20,6 +20,12 @@ const UserSchema = new Schema({
       ref: "users"
     },
   ],
+  follower: [
+    {
+      type: mongoose.ObjectId,
+      ref: "users"
+    },
+  ],
   profile:{
     type:String,
     default:''

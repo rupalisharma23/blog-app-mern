@@ -45,6 +45,8 @@ export default function DiscoverPeople() {
             let temp = users.filter((i) => { return i._id !== userDetail._id })
             setUsers(temp)
             toast.error(res.data.message);
+            user.frineds.push(userDetail)
+            localStorage.setItem('userId', JSON.stringify(user))
         })
             .catch((error) => {
                 toast.error(error.response.data.message);

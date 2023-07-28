@@ -23,6 +23,11 @@ const sendFollowRequest = async(req,res) =>{
           { $push: { frineds: recieversId } },
           { new: true }
         );
+        const follower = await User.findOneAndUpdate(
+          { _id: recieversId },
+          { $push: { follower: sendersId  } },
+          { new: true }
+        );
         res.status(200).send({message:'request sent'})
     } catch (error) {
       console.log("error in sendFollowRequest", error);

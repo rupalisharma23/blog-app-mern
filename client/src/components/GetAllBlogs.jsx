@@ -4,9 +4,11 @@ import { ToastContainer, toast } from "react-toastify";
 import backendURL from "./config";
 import "./blogs.css";
 import { useNavigate } from "react-router-dom";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 
 export default function GetAllBlogs() {
   const [blogArray, setBlogArray] = useState([]);
+  const [flag, setFlag] = useState(false);
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("userId"));
   const navigate = useNavigate();
@@ -141,8 +143,36 @@ export default function GetAllBlogs() {
   };
 
   return (
-    <div>
-      {" "}
+    <div className="signInContainer" style={{flexDirection:'row'}}>
+
+      <div className="blogFirstContainer">
+      <div className="blogContiner1">
+        <div style={{width:'100%'}}>
+        <img src={user.cover} className="coverImagClass" alt="" />
+        </div>
+        <div className="upload">
+          <img src={user.profile} alt="" />
+        </div>
+        <form className="formContainer" >
+          <div className="verticalAlign" style={{textAlign:'center'}}>
+            <label htmlFor="name" style={{fontSize:'15px'}}>Name: {user.name}</label>
+          </div>
+          <div className="verticalAlign" style={{textAlign:'center'}}>
+            <label htmlFor="email" style={{fontSize:'15px'}}>Email: {user.email}</label>
+          </div> 
+          <div style={{display:'flex'}}>
+            <div className="following">following</div>
+            <div className="following" style={{border:"none"}}>followers</div>
+            </div>     
+          <div style={{display:'flex', marginTop:"-1rem"}}>
+            <div className="following">{user.frineds?.length}</div>
+            <div className="following" style={{border:"none"}}>{user.follower?.length}</div>
+            </div>     
+        </form>
+      </div>
+      </div>
+      <div style={{height:'100vh', width:'40%'}}>
+              {" "}
       {blogArray.map((i, index) => {
         return (
           <div class="card">
@@ -257,6 +287,54 @@ export default function GetAllBlogs() {
           </div>
         );
       })}
+      </div>
+      <div className="blogFirstContainer">
+        <div className="blogContiner1">
+          <h2>following</h2>
+          {user.frineds.slice(0,5).map((friend)=>{
+            return(
+              <div  onClick={()=>{navigate(`/user-profile/${friend._id}`)}} className="friends_design"><img src={friend.profile? friend.profile: 'profilepicture.jpg'} alt="" />{friend.email}</div>
+            )
+          })}
+          {user.frineds.length>5 && <div className="friends_design" onClick={()=>{setFlag(true)}}>see all</div> }
+          <h2>followers</h2>
+          {user.follower.map((friend)=>{
+            return(
+              <div  onClick={()=>{navigate(`/user-profile/${friend._id}`)}} className="friends_design"><img src={friend.profile? friend.profile: 'profilepicture.jpg'} alt="" />{friend.email}</div>
+            )
+          })}
+        </div>
+      </div>
+      <Dialog open={flag} PaperProps={{
+        style: {
+          width: '25rem',
+          height: 'auto'
+        },
+      }} onClose={()=>{setFlag(false)}} maxWidth="md">
+        <DialogTitle style={{ textAlign: 'center', padding: '1rem', position: 'relative', fontFamily: 'Lato' }}>
+         <div onClick={()=>{setFlag(false)}}>
+         <i
+            className="fas fa-times"
+            style={{
+              position: 'absolute',
+              top: 10,
+              right: 10,
+              cursor: 'pointer',
+              fontSize: '1.2rem',
+            }}
+            
+          /></div> 
+        </DialogTitle>
+        <DialogContent>
+        <h2>following</h2>
+          {user.frineds.map((friend)=>{
+            return(
+              <div  onClick={()=>{navigate(`/user-profile/${friend._id}`)}} className="friends_design"><img src={friend.profile? friend.profile: 'profilepicture.jpg'} alt="" />{friend.email}</div>
+            )
+          })}
+        </DialogContent>
+
+      </Dialog>
     </div>
   );
 }

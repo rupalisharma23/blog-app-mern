@@ -35,6 +35,26 @@ const sendFollowRequest = async(req,res) =>{
     }
 }
 
+const sendUnFollowRequest = async(req,res) =>{
+    try {
+        const {sendersId,recieversId} = req.body
+        const sender = await User.findOneAndUpdate(
+          { _id: sendersId },
+          { $pull: { frineds: recieversId  } },
+          { new: true }
+        );
+        const follower = await User.findOneAndUpdate(
+          { _id: recieversId },
+          { $pull: { follower: sendersId  } },
+          { new: true }
+        );
+        res.status(200).send({message:'request sent'})
+    } catch (error) {
+      console.log("error in sendFollowRequest", error);
+      res.status(400).send({ error: error });
+    }
+}
 
 
-module.exports = { getAllUsers, sendFollowRequest };
+
+module.exports = { getAllUsers, sendFollowRequest,sendUnFollowRequest };

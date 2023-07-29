@@ -182,6 +182,17 @@ input[type='file']::-webkit-file-upload-button{
   cursor: pointer;
 }
 
+.smallButton{
+  padding: 2px 10px;
+  border-radius: 5px;
+  border: none;
+  font-family: var(--font-theme);
+  font-size: var(--font-small-size);
+  font-weight: var(--font-bold);
+  background-color: var(--button-color-theme);
+  cursor: pointer;
+}
+
 .alreadyUser{
   text-align: center;
     font-size: var(--font-medium-size);
@@ -213,7 +224,15 @@ input[type='file']::-webkit-file-upload-button{
   height: fit-content;
 }
 
+
 .blogFirstContainer{
+  height: 100vh;
+  width: 30%;
+  display: flex;
+  justify-content: center;
+}
+
+.blogFirstContainer1{
   height: 100vh;
   width: 30%;
   display: flex;
@@ -238,6 +257,7 @@ input[type='file']::-webkit-file-upload-button{
   width: 80%;
   margin-top: 1rem;
   cursor: pointer;
+  justify-content: space-between;
 }
 
 .friends_design img{
@@ -247,9 +267,66 @@ input[type='file']::-webkit-file-upload-button{
   border: 1.5px solid var(--theme-blue);
 }
 
+.blogContiner2{
+  width: 40%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+
+.card-title {
+  margin-bottom: 0;
+  font-size: var(--font-medium-size);
+  font-family: var(--font-theme);
+  font-weight: var(--font-bold);
+}
+
+.card-description {
+  margin-top: 2px;
+  font-size: var(--font-small-size);
+  font-family: var(--font-theme);
+  font-weight: var(--font-light);
+}
+
+.inputComment{
+    width: 100%;
+    height: 2rem;
+    border: none;
+    border-bottom: 1px solid var(--theme-blue);
+    font-size: var(--font-small-size);
+    font-family: var(--font-theme);
+    font-weight: var(--font-light);
+    outline: none;
+}
+
+.followersDeactive{
+  display: block;
+}
+
+.custom-dialog{
+  width: 25rem;
+  height: 10rem;
+}
+
 @media (max-width:1200px){
   .loginContiner1{
     width: 50%;
+  }
+}
+
+@media (max-width:1000px){
+  .followersDeactive{
+    display: none;
+  }
+  .blogContiner2{
+    width: 60%;
+  }
+
+  .blogFirstContainer1{
+    width: 40%;
   }
 }
 
@@ -273,6 +350,22 @@ input[type='file']::-webkit-file-upload-button{
   }
 
   .alreadyUser{
+    font-size: var(--font-small-size);
+  }
+
+  .blogFirstContainer1{
+    display: none;
+  }
+
+  .blogContiner2{
+    width: 85%;
+  }
+
+  .card-title{
+    font-size: var(--font-small-size);
+  }
+
+  .card-description{
     font-size: var(--font-small-size);
   }
 }

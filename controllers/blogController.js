@@ -19,7 +19,7 @@ const getAllBlogController = async(req,res) =>{
         const friendsList = friendsOfUser.frineds.map((friend) => {
           return friend._id;
         });
-        let newArray = [...friendsList];
+        let newArray = [...friendsList,req.params._id];
         const allBlogs = await blog.find({userId:{$in:newArray}}).populate({ path: "userId" , select:{password:0}}).sort({createdAt:-1});
         res.status(200).send({allBlogs})
 

@@ -18,6 +18,10 @@ const CommentSchema = new Schema(
     profile:{
       type:String,
       default:''
+    },
+    name:{
+      type:String,
+      require:true
     }
   },
   { timestamps: true }
@@ -36,6 +40,10 @@ const likeSchema = new Schema(
     profile:{
       type:String,
       default:''
+    },
+    name:{
+      type:String,
+      require:true
     }
   }
 );

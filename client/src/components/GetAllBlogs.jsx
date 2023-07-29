@@ -12,15 +12,20 @@ import {
   Button,
 } from "@mui/material";
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import CommentIcon from '@mui/icons-material/Comment';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import SendIcon from '@mui/icons-material/Send';
 
 export default function GetAllBlogs() {
   const [blogArray, setBlogArray] = useState([]);
   const [likesArray, setLikesArray] = useState([]);
+  const [commentArray, setCommentsArray] = useState([]);
   const [userList, setUserList] = useState({});
   const [flag, setFlag] = useState(false);
   const [followerFlag, setFollowerFlag] = useState(false);
   const [likesFlag, setLikesFlag] = useState(false);
+  const [commentFlag, setCommentFlag] = useState(false);
   const token = localStorage.getItem("token");
   let user = JSON.parse(localStorage.getItem("userId"))
   const navigate = useNavigate();
@@ -336,42 +341,21 @@ export default function GetAllBlogs() {
               </div>
               <h2 className="card-title">{i.title}</h2>
               <p className="card-description">{i.description}</p>
-              {/* {i.comments
-                .sort((a, b) => new Date(b?.createdAt) - new Date(a?.createdAt))
-                .map((comment) => {
-                  return (
-                    <div style={{ border: "1px solid" }}>
-                      <img
-                        src={comment.profile}
-                        style={{
-                          height: "50px",
-                          width: "50px",
-                          borderRadius: "50%",
-                        }}
-                        alt=""
-                      />{" "}
-                      <div
-                        onClick={() => {
-                          navigate(`/user-profile/${comment.userId}`);
-                        }}
-                      >
-                        {comment.email}
-                      </div>
-                      <div>{comment.comment}</div>
-                      {(i.userId._id == user._id ||
-                        comment.userId == user._id) && (
-                        <button
-                          onClick={() => {
-                            deleteComment(i._id, comment._id);
-                          }}
-                        >
-                          delete
-                        </button>
-                      )}
-                    </div>
-                  );
-                })} */}
-              {/* <textarea
+              <div >
+                  { i.likes.filter((i) => {
+                    return i.userId == user._id;
+                  }).length > 0? <FavoriteIcon 
+                  onClick={() => {
+                    like(i._id, index);
+                  }} style={{color:'red', cursor:'pointer', fontSize:'35px'}} /> : <FavoriteBorderIcon 
+                  onClick={() => {
+                    like(i._id, index);
+                  }} style={{ cursor:'pointer', fontSize:'35px'}}/> }
+                  <CommentIcon onClick={()=>{setCommentsArray(i);setCommentFlag(true)}} style={{ cursor:'pointer', fontSize:'35px', marginLeft:'10px'}}/>
+              </div>
+              {i.likes.length>0 && <div className="card-title"  onClick={()=>{setLikesArray(i.likes); setLikesFlag(true)}} style={{fontSize:'12px', cursor:'pointer'}}>{i.likes.length} people liked</div>}
+              <div style={{display:'flex'}}>
+              <input
                 value={i.commentValue}
                 onChange={(e) => {
                   addCommentsFunc(e.target.value, index);
@@ -380,21 +364,19 @@ export default function GetAllBlogs() {
                 id=""
                 cols="30"
                 rows="10"
+                className="inputComment"
+                placeholder="Add comment"
               />
-              <button
+              {/* <button
                 onClick={() => {
                   addComment(i._id, i.commentValue);
                 }}
               >
                 add
               </button> */}
-              <div 
-                onClick={() => {
-                  like(i._id, index);
-                }}>
-                  { i.likes.filter((i) => {
-                    return i.userId == user._id;
-                  }).length > 0? <FavoriteIcon style={{color:'red', cursor:'pointer', fontSize:'35px'}} /> : <FavoriteBorderIcon style={{ cursor:'pointer', fontSize:'35px'}}/> }
+              <SendIcon  onClick={() => {
+                  addComment(i._id, i.commentValue);
+                }} style={{fontSize:'30px', cursor:"pointer"}} />
               </div>
               {/* <div>people who liked</div>
               {i.likes.map((like) => {
@@ -413,7 +395,6 @@ export default function GetAllBlogs() {
                   </div>
                 );
               })} */}
-              {i.likes.length>0 && <div className="card-title" onClick={()=>{setLikesArray(i.likes); setLikesFlag(true)}} style={{fontSize:'12px'}}>{i.likes.length} people liked</div>}
             </div>
           );
         })}
@@ -703,6 +684,84 @@ export default function GetAllBlogs() {
             );
           })}
         </DialogContent>
+      </Dialog>
+      <Dialog
+        open={commentFlag}
+        PaperProps={{
+          style: {
+            width: "auto",
+            height: "33rem",
+          },
+        }}
+        onClose={() => {
+          setCommentFlag(false);
+        }}
+        maxWidth="md"
+      >
+        <DialogTitle
+          style={{
+            textAlign: "center",
+            padding: "1rem",
+            position: "relative",
+            fontFamily: "Lato",
+          }}
+        >
+          <div
+            onClick={() => {
+              setCommentFlag(false);
+            }}
+          >
+            <i
+              className="fas fa-times"
+              style={{
+                position: "absolute",
+                top: 10,
+                right: 10,
+                cursor: "pointer",
+                fontSize: "1.2rem",
+              }}
+            />
+          </div>
+        </DialogTitle>
+        <DialogContent>
+          <h2>comments</h2>
+          {commentArray.comments?.sort((a, b) => new Date(b?.createdAt) - new Date(a?.createdAt))
+                .map((comment) => {
+                  return (
+                    <div>
+                      <div className="friends_design">
+                      <img
+                        src={comment.profile}
+                        style={{
+                          height: "50px",
+                          width: "50px",
+                          borderRadius: "50%",
+                        }}
+                        
+                        onClick={() => {
+                          navigate(`/user-profile/${comment.userId}`);
+                        }}
+                        alt=""
+                      />{" "}
+                      <div
+                      >
+                        {comment.email}             
+                      <div style={{fontWeight:'300'}}>{comment.comment}</div>
+                      {(commentArray.userId._id == user._id ||
+                        comment.userId == user._id) && (
+                        <DeleteOutlineIcon style={{color:'red', fontSize:'20px'}}  onClick={() => {
+                          deleteComment(commentArray._id, comment._id);
+                        }}/>
+                      )}
+                      </div>
+                      </div>
+                    </div>
+                  );
+                })}
+        </DialogContent>
+        <DialogActions>
+          
+        </DialogActions>
       </Dialog>
     </div>
   );

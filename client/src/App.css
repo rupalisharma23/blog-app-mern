@@ -278,6 +278,17 @@ input[type='file']::-webkit-file-upload-button{
   font-weight: var(--font-light);
 }
 
+.inputComment{
+    width: 100%;
+    height: 2rem;
+    border: none;
+    border-bottom: 1px solid var(--theme-blue);
+    font-size: var(--font-small-size);
+    font-family: var(--font-theme);
+    font-weight: var(--font-light);
+    outline: none;
+}
+
 @media (max-width:1200px){
   .loginContiner1{
     width: 50%;

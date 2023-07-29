@@ -35,7 +35,6 @@ const SignInGoogle = async (req, res) => {
     });
 
     if (userExist) {
-      console.log(userExist);
       const token = await jwt.sign(
         { _id: userExist._id },
         process.env.JWT_SECRET

@@ -34,6 +34,10 @@ export default function DiscoverPeople() {
     
 
     const sendRequest = (userDetail) =>{
+        let temp = users.filter((i) => { return i._id !== userDetail._id })
+        setUsers(temp)
+        user.frineds.push(userDetail)
+        localStorage.setItem('userId', JSON.stringify(user))
         axios.post(`${backendURL}/api/follow-request`,{
             sendersId: user._id,
             recieversId: userDetail._id
@@ -42,11 +46,7 @@ export default function DiscoverPeople() {
                 Authorization: token,
             },
         }).then((res) => {
-            let temp = users.filter((i) => { return i._id !== userDetail._id })
-            setUsers(temp)
             toast.error(res.data.message);
-            user.frineds.push(userDetail)
-            localStorage.setItem('userId', JSON.stringify(user))
         })
             .catch((error) => {
                 toast.error(error.response.data.message);

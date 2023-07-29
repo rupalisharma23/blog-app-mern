@@ -43,6 +43,11 @@ const sendUnFollowRequest = async(req,res) =>{
           { $pull: { frineds: recieversId  } },
           { new: true }
         );
+        const follower = await User.findOneAndUpdate(
+          { _id: recieversId },
+          { $pull: { follower: sendersId  } },
+          { new: true }
+        );
         res.status(200).send({message:'request sent'})
     } catch (error) {
       console.log("error in sendFollowRequest", error);

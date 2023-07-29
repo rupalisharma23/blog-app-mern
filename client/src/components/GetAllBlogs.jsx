@@ -14,15 +14,29 @@ import {
 
 export default function GetAllBlogs() {
   const [blogArray, setBlogArray] = useState([]);
+  const [userList, setUserList] = useState({});
   const [flag, setFlag] = useState(false);
   const [followerFlag, setFollowerFlag] = useState(false);
   const token = localStorage.getItem("token");
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("userId")));
-  console.log(user);
+  let user = JSON.parse(localStorage.getItem("userId"))
   const navigate = useNavigate();
   useEffect(() => {
     getAllBlogController();
+    userProfile()
   }, []);
+
+  console.log(userList)
+
+  const userProfile = () =>{
+   return  axios.get(`${backendURL}/api/user-profile/${user._id}`,{headers:{Authorization:token}})
+    .then((res) => {
+     setUserList(res.data.userExist)
+    })
+    .catch((error) => {
+      toast.error(error.response.data.message);
+      console.log(error);
+    });
+  }
 
   const getAllBlogController = () => {
     axios
@@ -125,19 +139,20 @@ export default function GetAllBlogs() {
       });
   };
 
+
   const sendUnFollowRequest = (userDetail) => {
-    let unfollow = user.frineds.filter((friend) => {
-      return friend._id !== userDetail._id;
-    });
-    setUser((prevUser) => ({
-      ...prevUser,
-      frineds: unfollow,
-    }));
-    const updatedUserData = {
-      ...user,
-      frineds: unfollow,
-    };
-    localStorage.setItem("userId", JSON.stringify(updatedUserData));
+    // let unfollow = user.frineds.filter((friend) => {
+    //   return friend._id !== userDetail._id;
+    // });
+    // setUserList((prevUser) => ({
+    //   ...prevUser,
+    //   frineds: unfollow,
+    // }));
+    // const updatedUserData = {
+    //   ...user,
+    //   frineds: unfollow,
+    // };
+    // localStorage.setItem("userId", JSON.stringify(updatedUserData));
     return axios
       .post(
         `${backendURL}/api/unfollow-request`,
@@ -153,6 +168,7 @@ export default function GetAllBlogs() {
       )
       .then((res) => {
         getAllBlogController();
+        userProfile();
       })
       .catch((error) => {
         toast.error(error.response.data.message);
@@ -160,18 +176,21 @@ export default function GetAllBlogs() {
       });
   };
 
+  console.log(userList)
+
   const sendRequest = (userDetail) => {
-    const updatedFriends = [...user.frineds];
-    updatedFriends.push(userDetail);
+    // const updatedFriends = [...user.frineds];
+    // updatedFriends.push(userDetail);
 
-    const updatedUser = {
-      ...user,
-      frineds: updatedFriends,
-    };
+    // const updatedUser = {
+    //   ...user,
+    //   frineds: updatedFriends,
+    // };
 
-    localStorage.setItem("userId", JSON.stringify(updatedUser));
+    // console.log(updatedUser)
+    // // localStorage.setItem("userId", JSON.stringify(updatedUser));
 
-    setUser(updatedUser);
+    // setUserList(updatedUser);
     return axios
       .post(
         `${backendURL}/api/follow-request`,
@@ -187,12 +206,14 @@ export default function GetAllBlogs() {
       )
       .then((res) => {
         getAllBlogController();
+        userProfile();
       })
       .catch((error) => {
         toast.error(error.response.data.message);
         console.log(error);
       });
   };
+
 
   const pre = (i) => {
     let temp = [...blogArray];
@@ -218,6 +239,8 @@ export default function GetAllBlogs() {
     temp[index] = { ...temp[index], commentValue: value };
     setBlogArray(temp);
   };
+
+  console.log(userList)
 
   return (
     <div className="signInContainer" style={{ flexDirection: "row" }}>
@@ -247,19 +270,28 @@ export default function GetAllBlogs() {
               </div>
             </div>
             <div style={{ display: "flex", marginTop: "-1rem" }}>
-              <div className="following">{user.frineds?.length}</div>
+              <div className="following">{userList?.frineds?.length}</div>
               <div className="following" style={{ border: "none" }}>
-                {user.follower?.length}
+                {userList?.follower?.length}
               </div>
             </div>
           </form>
         </div>
       </div>
-      <div style={{ height: "100vh", width: "40%" }}>
+      <div className="blogContiner2" >
         {" "}
         {blogArray.map((i, index) => {
           return (
             <div class="card">
+              <div className="friends_design" style={{marginBottom:'1rem'}}>
+                <img
+                  src={i.userId.profile ? i.userId.profile : "profilepicture.jpg"}
+                  alt=""
+                  onClick={() => {
+                    navigate(`/user-profile/${i.userId._id}`);
+                  }}
+                />
+               <div>{i.userId.email}<div>{i.createdAt}</div> </div></div>
               <div class="swiper-container">
                 {i.images.length > 1 && (
                   <div
@@ -273,7 +305,7 @@ export default function GetAllBlogs() {
                     />
                   </div>
                 )}
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", height:"200px", width:'100%' }}>
                   <img
                     key={i._id}
                     src={i.images[i.currentIndex]}
@@ -396,12 +428,11 @@ export default function GetAllBlogs() {
       <div className="blogFirstContainer">
         <div className="blogContiner1">
           <h2>following</h2>
-          {user.frineds.slice(0, 5).map((friend) => {
+          {userList?.frineds?.slice(0.5).map((friend) => {
             return (
               <div className="friends_design">
                 <img
                   src={friend.profile ? friend.profile : "profilepicture.jpg"}
-                  alt=""
                   onClick={() => {
                     navigate(`/user-profile/${friend._id}`);
                   }}
@@ -418,7 +449,7 @@ export default function GetAllBlogs() {
               </div>
             );
           })}
-          {user.frineds.length > 2 && (
+          {userList?.frineds?.length > 2 && (
             <div
               className="friends_design"
               onClick={() => {
@@ -429,7 +460,7 @@ export default function GetAllBlogs() {
             </div>
           )}
           <h2>followers</h2>
-          {user.follower.map((friend) => {
+          {userList?.follower?.map((friend) => {
             return (
               <div className="friends_design">
                 <img
@@ -442,7 +473,7 @@ export default function GetAllBlogs() {
                 {friend.email}{" "}
                 <button
                   onClick={() => {
-                    user.frineds.some((i) => {
+                    userList?.frineds.some((i) => {
                       return i._id == friend._id;
                     })
                       ? sendUnFollowRequest(friend)
@@ -450,7 +481,7 @@ export default function GetAllBlogs() {
                   }}
                   className="smallButton"
                 >
-                  {user.frineds.some((i) => {
+                  {userList?.frineds.some((i) => {
                     return i._id == friend._id;
                   })
                     ? "unfollow"
@@ -459,7 +490,7 @@ export default function GetAllBlogs() {
               </div>
             );
           })}
-          {user.follower.length > 1 && (
+          {userList?.follower?.length > 1 && (
             <div
               className="friends_design"
               onClick={() => {
@@ -511,7 +542,7 @@ export default function GetAllBlogs() {
         </DialogTitle>
         <DialogContent>
           <h2>following</h2>
-          {user.frineds.map((friend) => {
+          {userList?.frineds?.map((friend) => {
             return (
               <div className="friends_design">
                 <img
@@ -575,7 +606,7 @@ export default function GetAllBlogs() {
         </DialogTitle>
         <DialogContent>
           <h2>followers</h2>
-          {user.follower.map((friend) => {
+          {userList?.follower?.map((friend) => {
             return (
               <div className="friends_design">
                 <img
@@ -588,7 +619,7 @@ export default function GetAllBlogs() {
                 {friend.email}
                 <button
                   onClick={() => {
-                    user.frineds.some((i) => {
+                    userList?.frineds.some((i) => {
                       return i._id == friend._id;
                     })
                       ? sendUnFollowRequest(friend)
@@ -596,7 +627,7 @@ export default function GetAllBlogs() {
                   }}
                   className="smallButton"
                 >
-                  {user.frineds.some((i) => {
+                  {userList?.frineds.some((i) => {
                     return i._id == friend._id;
                   })
                     ? "unfollow"

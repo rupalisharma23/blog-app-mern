@@ -166,4 +166,17 @@ const updateProfile = async(req,res) =>{
   }
 }
 
-module.exports = { SignIn, login, SignInGoogle,forgotPassword,resetPassword,updateProfile };
+const userProfile = async(req,res) =>{
+  try{
+    const {_id} = req.params
+
+    const userExist = await User.findOne({_id}).populate({path:"frineds"}).populate({path:'follower'})
+    res.status(200).send({userExist})
+
+  }catch(error){
+    console.log('error in updateProfile', error);
+    res.status(400).send({error})
+  }
+}
+
+module.exports = { SignIn, login, SignInGoogle,forgotPassword,resetPassword,updateProfile,userProfile };

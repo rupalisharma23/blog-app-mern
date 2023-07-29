@@ -263,6 +263,21 @@ input[type='file']::-webkit-file-upload-button{
   height: 100vh;
 }
 
+
+.card-title {
+  margin-bottom: 0;
+  font-size: var(--font-medium-size);
+  font-family: var(--font-theme);
+  font-weight: var(--font-bold);
+}
+
+.card-description {
+  margin-top: 2px;
+  font-size: var(--font-small-size);
+  font-family: var(--font-theme);
+  font-weight: var(--font-light);
+}
+
 @media (max-width:1200px){
   .loginContiner1{
     width: 50%;

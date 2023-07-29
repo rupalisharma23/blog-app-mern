@@ -11,12 +11,16 @@ import {
   DialogActions,
   Button,
 } from "@mui/material";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 export default function GetAllBlogs() {
   const [blogArray, setBlogArray] = useState([]);
+  const [likesArray, setLikesArray] = useState([]);
   const [userList, setUserList] = useState({});
   const [flag, setFlag] = useState(false);
   const [followerFlag, setFollowerFlag] = useState(false);
+  const [likesFlag, setLikesFlag] = useState(false);
   const token = localStorage.getItem("token");
   let user = JSON.parse(localStorage.getItem("userId"))
   const navigate = useNavigate();
@@ -140,7 +144,7 @@ export default function GetAllBlogs() {
   };
 
 
-  const sendUnFollowRequest = (userDetail) => {
+  const sendUnFollowRequest = (userDetail, likeFlag) => {
     // let unfollow = user.frineds.filter((friend) => {
     //   return friend._id !== userDetail._id;
     // });
@@ -158,7 +162,7 @@ export default function GetAllBlogs() {
         `${backendURL}/api/unfollow-request`,
         {
           sendersId: user._id,
-          recieversId: userDetail._id,
+          recieversId: likeFlag? userDetail.userId: userDetail._id,
         },
         {
           headers: {
@@ -178,7 +182,7 @@ export default function GetAllBlogs() {
 
   console.log(userList)
 
-  const sendRequest = (userDetail) => {
+  const sendRequest = (userDetail, likeFlag) => {
     // const updatedFriends = [...user.frineds];
     // updatedFriends.push(userDetail);
 
@@ -196,7 +200,7 @@ export default function GetAllBlogs() {
         `${backendURL}/api/follow-request`,
         {
           sendersId: user._id,
-          recieversId: userDetail._id,
+          recieversId: likeFlag? userDetail.userId: userDetail._id,
         },
         {
           headers: {
@@ -330,9 +334,9 @@ export default function GetAllBlogs() {
                   </div>
                 )}
               </div>
-              <h2 class="card-title">{i.title}</h2>
-              <p class="card-description">{i.description}</p>
-              {i.comments
+              <h2 className="card-title">{i.title}</h2>
+              <p className="card-description">{i.description}</p>
+              {/* {i.comments
                 .sort((a, b) => new Date(b?.createdAt) - new Date(a?.createdAt))
                 .map((comment) => {
                   return (
@@ -366,8 +370,8 @@ export default function GetAllBlogs() {
                       )}
                     </div>
                   );
-                })}
-              <textarea
+                })} */}
+              {/* <textarea
                 value={i.commentValue}
                 onChange={(e) => {
                   addCommentsFunc(e.target.value, index);
@@ -383,28 +387,16 @@ export default function GetAllBlogs() {
                 }}
               >
                 add
-              </button>
-              <button
-                style={
-                  i.likes.filter((i) => {
-                    return i.userId == user._id;
-                  }).length > 0
-                    ? { background: "blue", color: "white" }
-                    : {}
-                }
+              </button> */}
+              <div 
                 onClick={() => {
                   like(i._id, index);
-                }}
-              >
-                {" "}
-                {i.likes.filter((i) => {
-                  return i.userId == user._id;
-                }).length > 0
-                  ? "unlike"
-                  : "like"}{" "}
-                {i.likes.length}{" "}
-              </button>
-              <div>people who liked</div>
+                }}>
+                  { i.likes.filter((i) => {
+                    return i.userId == user._id;
+                  }).length > 0? <FavoriteIcon style={{color:'red', cursor:'pointer', fontSize:'35px'}} /> : <FavoriteBorderIcon style={{ cursor:'pointer', fontSize:'35px'}}/> }
+              </div>
+              {/* <div>people who liked</div>
               {i.likes.map((like) => {
                 return (
                   <div>
@@ -420,7 +412,8 @@ export default function GetAllBlogs() {
                     {like.email}
                   </div>
                 );
-              })}
+              })} */}
+              {i.likes.length>0 && <div className="card-title" onClick={()=>{setLikesArray(i.likes); setLikesFlag(true)}} style={{fontSize:'12px'}}>{i.likes.length} people liked</div>}
             </div>
           );
         })}
@@ -633,6 +626,79 @@ export default function GetAllBlogs() {
                     ? "unfollow"
                     : "follow"}
                 </button>
+              </div>
+            );
+          })}
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={likesFlag}
+        PaperProps={{
+          style: {
+            width: "auto",
+            height: "33rem",
+          },
+        }}
+        onClose={() => {
+          setLikesFlag(false);
+        }}
+        maxWidth="md"
+      >
+        <DialogTitle
+          style={{
+            textAlign: "center",
+            padding: "1rem",
+            position: "relative",
+            fontFamily: "Lato",
+          }}
+        >
+          <div
+            onClick={() => {
+              setLikesFlag(false);
+            }}
+          >
+            <i
+              className="fas fa-times"
+              style={{
+                position: "absolute",
+                top: 10,
+                right: 10,
+                cursor: "pointer",
+                fontSize: "1.2rem",
+              }}
+            />
+          </div>
+        </DialogTitle>
+        <DialogContent>
+          <h2>Likes</h2>
+          {console.log(likesArray)}
+          {likesArray?.map((friend) => {
+            return (
+              <div className="friends_design">
+                <img
+                  onClick={() => {
+                    navigate(`/user-profile/${friend.userId}`);
+                  }}
+                  src={friend.profile ? friend.profile : "profilepicture.jpg"}
+                  alt=""
+                />
+                {friend.email}
+               { user._id!== friend.userId && <button
+                  onClick={() => {
+                    userList?.frineds.some((i) => {
+                      return i._id == friend.userId;
+                    })
+                      ? sendUnFollowRequest(friend, 'likes')
+                      : sendRequest(friend,'likes');
+                  }}
+                  className="smallButton"
+                >
+                  {userList?.frineds.some((i) => {
+                    return i._id == friend.userId;
+                  })
+                    ? "unfollow"
+                    :  "follow"}
+                </button>}
               </div>
             );
           })}

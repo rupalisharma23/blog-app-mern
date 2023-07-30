@@ -68,11 +68,7 @@ const SignInGoogle = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const userExist = await User.findOne({ email }).populate({
-      path: "frineds"
-    }).populate({
-       path:"follower"
-    })
+    const userExist = await User.findOne({ email }).populate([{path:'frineds', select:{password:0} },{ path:'follower', select:{password:0} }])
     if (!userExist) {
       return res.status(400).send({ message: "user not found" });
     }

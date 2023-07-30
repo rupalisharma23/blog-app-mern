@@ -3,6 +3,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import backendURL from './config';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 export default function UpdateProfile() {
     const token = localStorage.getItem('token');
@@ -60,30 +61,59 @@ const handleLogout = () => {
     })
   }
   return (
-    <div>
-    <ToastContainer />
-    <div>
-      <h2>Update Profile</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Name:</label>
-          <input type="text" id="name" name="name" value={name} onChange={(e) => setName(e.target.value)} required />
-        </div>
-        <div>
-              <label htmlFor="images">profile:</label>
-              <input type="file" id="images" name="profile" accept="image/*"  onChange={handleInputChange}  />
-          </div>
-          <div>
-              <label htmlFor="images">cover</label>
-              <input type="file" id="images" name="cover" accept="image/*"  onChange={handleInputChange} />
-          </div>
-          <div onClick={()=>{resetPassword()}} >change password</div>
-         { profile && <img src={profile} alt="" style={{height:'200px', width:'200px', objectFit:'contain', borderRadius:'50%'}} />}
-         { cover && <img src={cover} alt="" style={{height:'200px', width:'200px', objectFit:'contain'}} />}
-        <button type="submit">update</button>
-      </form>
-      <button type="submit" onClick={handleLogout}>logout</button>
+  <div className="signInContainer">
+  <ToastContainer />
+  <div className="loginContiner1">
+    <div style={{width:'100%'}}>
+    <label onChange={handleInputChange} htmlFor="images">
+    <img src={cover?cover:"coverpicture.jpg"} className="coverImagClass" alt="" /></label>
+    <input
+          type="file"
+          id="images"
+          name="cover"
+          accept="image/*"
+          onChange={handleInputChange}
+         style={{display:'none'}}
+        />
     </div>
+
+    <div className="upload">
+      <img src={profile? profile : 'profilepicture.jpg'} alt="" />
+      <div className="round">
+        <input
+          type="file"
+          id="images"
+          name="profile"
+          accept="image/*"
+          onChange={handleInputChange}
+        />
+        <i className="fa fa-camera" ></i>
+      </div>
+    </div>
+
+    <h2>Update</h2>
+    <form className="formContainer" onSubmit={handleSubmit}>
+      <div className="verticalAlign">
+        <label htmlFor="name">Name:</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          className="inputDesign"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+      </div>
+      <div className="verticalAlign">
+        <label style={{display:'flex', alignItems:'center'}} onClick={()=>{resetPassword()}} htmlFor="password">change password <ArrowForwardIosIcon/> </label>
+      </div>
+      <div style={{display:'flex', alignItems:'center', justifyContent:'center', gap:'10px'}}>
+      <button className="singInButton" type="submit">save</button>
+      <button className="singInButton"  type="submit" onClick={handleLogout}>logout</button>
+      </div>
+    </form>
   </div>
+</div>
   )
 }

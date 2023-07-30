@@ -8,8 +8,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
-  Button,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import CommentIcon from "@mui/icons-material/Comment";
@@ -22,10 +20,12 @@ export default function GetAllBlogs() {
   const [blogArray, setBlogArray] = useState([]);
   const [likesArray, setLikesArray] = useState([]);
   const [commentArray, setCommentsArray] = useState([]);
+  const [users,setUsers] = useState([]);
   const [userList, setUserList] = useState({});
   const [flag, setFlag] = useState(false);
   const [followerFlag, setFollowerFlag] = useState(false);
   const [likesFlag, setLikesFlag] = useState(false);
+  const [discoverFlag, setDiscoverFlag] = useState(false);
   const [commentFlag, setCommentFlag] = useState(false);
   const [indexForDeleteComment, setIndexForDeleteComment] = useState(0);
   const token = localStorage.getItem("token");
@@ -34,6 +34,7 @@ export default function GetAllBlogs() {
   useEffect(() => {
     getAllBlogController();
     userProfile();
+    getAllUsers();
   }, []);
 
   const userProfile = () => {
@@ -98,7 +99,7 @@ export default function GetAllBlogs() {
           Authorization: token,
         },
       })
-      .then((res) => {})
+      .then((res) => { getAllBlogController();})
       .catch((error) => {
         console.log(error);
       });
@@ -186,6 +187,7 @@ export default function GetAllBlogs() {
       .then((res) => {
         getAllBlogController();
         userProfile();
+        getAllUsers();
       })
       .catch((error) => {
         toast.error(error.response.data.message);
@@ -194,6 +196,10 @@ export default function GetAllBlogs() {
   };
 
   const sendRequest = (userDetail, likeFlag) => {
+    let temp = users.filter((i) => { return i._id !== userDetail._id })
+    setUsers(temp)
+    user.frineds.push(userDetail)
+    localStorage.setItem('userId', JSON.stringify(user))
     return axios
       .post(
         `${backendURL}/api/follow-request`,
@@ -210,12 +216,30 @@ export default function GetAllBlogs() {
       .then((res) => {
         getAllBlogController();
         userProfile();
+        getAllUsers();
       })
       .catch((error) => {
         toast.error(error.response.data.message);
         console.log(error);
       });
   };
+
+  const getAllUsers = () => {       
+    axios
+        .get(`${backendURL}/api/blog-users/${user._id}`, {
+            headers: {
+                Authorization: token,
+            },
+        })
+        .then((res) => {
+            setUsers(res.data.allUsers)
+        })
+        .catch((error) => {
+            toast.error(error.response.data.message);
+            console.log(error);
+        });
+};
+
 
   const pre = (i) => {
     let temp = [...blogArray];
@@ -243,9 +267,9 @@ export default function GetAllBlogs() {
   };
 
   return (
-    <div className="signInContainer" style={{ flexDirection: "row" }}>
+    <div className="signInContainer roww">
       <ToastContainer />
-      <div className="blogFirstContainer1">
+      <div className="blogFirstContainer1Profile">
         <div className="blogContiner1">
           <div style={{ width: "100%" }}>
             <img
@@ -278,13 +302,44 @@ export default function GetAllBlogs() {
               </div>
             </div>
             <div style={{ display: "flex", marginTop: "-1rem" }}>
-              <div className="following">{userList?.frineds?.length}</div>
+              <div className="following"><div onClick={()=>{setFlag(true)}} >{userList?.frineds?.length}</div></div>
               <div className="following" style={{ border: "none" }}>
-                {userList?.follower?.length}
+                <div onClick={()=>{setFollowerFlag(true)}}>{userList?.follower?.length}</div>
               </div>
             </div>
           </form>
         </div>
+       { users.length > 0 && <div className="blogContiner1 blogFirstContainer1" style={{width:'90%', gap:'0', height:'auto'}}>
+          <h2>people you may know</h2>
+          {users.map((user)=>{
+            return(
+                <div  className="friends_design">
+                                    <div
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
+                  <img
+                    src={user.profile ? user.profile : "profilepicture.jpg"}
+                    onClick={() => {
+                      navigate(`/user-profile/${user._id}`);
+                    }}
+                  />
+                  {user.name}
+                </div>
+                <button className="smallButton" onClick={()=>{sendRequest(user)}}>follow</button>
+                </div>
+            )
+        })}
+         {users.length > 0 && (
+            <div
+              className="friends_design"
+              onClick={() => {
+                setDiscoverFlag(true);
+              }}
+            >
+              see all
+            </div>
+          )}
+      </div>}
       </div>
       <div className="blogContiner2">
         {" "}
@@ -594,9 +649,9 @@ export default function GetAllBlogs() {
         </Dialog>
       </div>
       <div className="blogFirstContainer followersDeactive">
-        <div className="blogContiner1">
-          <h2>following</h2>
-          {userList?.frineds?.slice(0.5).map((friend) => {
+        { Object.keys(userList).length>0 && <div className="blogContiner1">
+           <h2>following</h2>
+          { userList?.frineds.length==0 ? <div className="card-description">no following</div>: userList?.frineds?.slice(0.5).map((friend) => {
             return (
               <div className="friends_design">
                 <div
@@ -631,8 +686,8 @@ export default function GetAllBlogs() {
               see all
             </div>
           )}
-          <h2>followers</h2>
-          {userList?.follower?.map((friend) => {
+           <h2>followers</h2>
+          { userList?.follower.length==0 ? <div className="card-description">no followers</div>:  userList?.follower?.map((friend) => {
             return (
               <div className="friends_design">
                 <div
@@ -676,13 +731,13 @@ export default function GetAllBlogs() {
               see all
             </div>
           )}
-        </div>
+        </div>}
       </div>
       <Dialog
         open={flag}
         PaperProps={{
           style: {
-            width: "30%",
+            width: "100%",
             height: "33rem",
           },
         }}
@@ -750,7 +805,7 @@ export default function GetAllBlogs() {
         open={followerFlag}
         PaperProps={{
           style: {
-            width: "30%",
+            width: "100%",
             height: "33rem",
           },
         }}
@@ -817,6 +872,67 @@ export default function GetAllBlogs() {
                     ? "unfollow"
                     : "follow"}
                 </button>
+              </div>
+            );
+          })}
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={discoverFlag}
+        PaperProps={{
+          style: {
+            width: "30%",
+            height: "33rem",
+          },
+        }}
+        onClose={() => {
+          setDiscoverFlag(false);
+        }}
+        maxWidth="md"
+      >
+        <DialogTitle
+          style={{
+            textAlign: "center",
+            padding: "1rem",
+            position: "relative",
+            fontFamily: "Lato",
+          }}
+        >
+          <div
+            onClick={() => {
+              setDiscoverFlag(false);
+            }}
+          >
+            <i
+              className="fas fa-times"
+              style={{
+                position: "absolute",
+                top: 10,
+                right: 10,
+                cursor: "pointer",
+                fontSize: "1.2rem",
+              }}
+            />
+          </div>
+        </DialogTitle>
+        <DialogContent>
+          <h2>people you may know</h2>
+          {users?.map((friend) => {
+            return (
+              <div className="friends_design">
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
+                  <img
+                    onClick={() => {
+                      navigate(`/user-profile/${friend._id}`);
+                    }}
+                    src={friend.profile ? friend.profile : "profilepicture.jpg"}
+                    alt=""
+                  />
+                  {friend.name}
+                </div>
+                <button className="smallButton" onClick={()=>{sendRequest(user)}}>follow</button>
               </div>
             );
           })}

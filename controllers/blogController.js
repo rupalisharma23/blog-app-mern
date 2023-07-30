@@ -64,9 +64,10 @@ const deleteSingleBlog = async(req,res) =>{
 const getPersonalBlogController = async (req, res) => {
   try {
     const allBlogs = await blog
-      .find({ })
-      .populate({ path: "userId", select: { password: 0 } })
-      .find({ userId: { _id: req.params._id } })
+    .find({ userId: { _id: req.params._id } })
+      .populate({ path: "userId",
+      select: { password: 0 },
+      populate: [{ path: "frineds", select: { password: 0 } }, { path: "follower", select: { password: 0 }}] })
       .sort({ createdAt: -1 });
     res.status(200).send({ allBlogs });
   } catch (error) {

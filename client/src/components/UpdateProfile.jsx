@@ -35,6 +35,7 @@ export default function UpdateProfile() {
 
 const handleLogout = () => {
     localStorage.clear(); // Clear user data from local storage
+    navigate('/login')
   };
 
   const handleSubmit = (e) => {

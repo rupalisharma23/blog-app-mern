@@ -3,9 +3,15 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 import { NavLink, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 export default function Footer() {
-    let user = JSON.parse(localStorage.getItem("userId"));
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("userId")));
+
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("userId"));
+    setUser(userData);
+  }, [user]);
   return (
     <div className='footer'>
       <div>

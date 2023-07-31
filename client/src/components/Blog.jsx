@@ -4,12 +4,16 @@ import { ToastContainer, toast } from 'react-toastify';
 import backendURL from './config';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import Footer from "./Footer";
+import {CircularProgress} from "@mui/material";
+import { useNavigate } from 'react-router-dom';
 
 export default function Blog() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [images, setImages] = useState([]);
     const [blogArray, setBlogArray] = useState([]);
+    const [loader,setLoader] = useState(false)
+    const navigate = useNavigate();
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('userId'));
 
@@ -37,6 +41,7 @@ export default function Blog() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setLoader(true)
         axios
             .post(
                 `${backendURL}/api/create-blog`,
@@ -48,12 +53,15 @@ export default function Blog() {
                 }
             )
             .then((res) => {
+                setLoader(false)
+                navigate('/allBlogs')
                 toast.success('Blog created successfully');
                 setTitle('');
                 setDescription('');
                 setImages([]);
             })
             .catch((error) => {
+                setLoader(false)
                 toast.error(error.response.data.message);
                 console.log(error);
             });
@@ -88,7 +96,7 @@ export default function Blog() {
                    <div style={{position:'relative'}}> <img key={index} src={image} alt={`Image ${index}`} /> <div style={{position:'absolute', top:'-10px', right:'-5px', cursor:'pointer'}} onClick={()=>{removeImage(index)}} > <i className='fa fa-times'></i> </div> </div>
                 ))}
             </div>
-            <button className="singInButton" type="submit">Submit</button>
+            <button className="singInButton" type="submit">{loader?<CircularProgress style={{color:'white'}} />:'Submit'}</button>
         </form>
             </div>
            

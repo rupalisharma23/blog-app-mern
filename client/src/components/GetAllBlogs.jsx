@@ -16,6 +16,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import SendIcon from "@mui/icons-material/Send";
 import moment from "moment";
 import Footer from "./Footer";
+import {CircularProgress} from "@mui/material";
 
 export default function GetAllBlogs() {
   const [blogArray, setBlogArray] = useState([]);
@@ -28,6 +29,7 @@ export default function GetAllBlogs() {
   const [likesFlag, setLikesFlag] = useState(false);
   const [discoverFlag, setDiscoverFlag] = useState(false);
   const [commentFlag, setCommentFlag] = useState(false);
+  const [mainLoader, setMainLoader] = useState(false)
   const [indexForDeleteComment, setIndexForDeleteComment] = useState(0);
   const token = localStorage.getItem("token");
   let user = JSON.parse(localStorage.getItem("userId"));
@@ -53,13 +55,15 @@ export default function GetAllBlogs() {
   };
 
   const getAllBlogController = () => {
-    axios
+    setMainLoader(true)
+   return axios
       .get(`${backendURL}/api/get-blog/${user._id}`, {
         headers: {
           Authorization: token,
         },
       })
       .then((res) => {
+        setMainLoader(false)
         let temp = [];
         res.data.allBlogs.forEach((i) => {
           temp.push({
@@ -72,6 +76,7 @@ export default function GetAllBlogs() {
         setBlogArray(temp);
       })
       .catch((error) => {
+        setMainLoader(false)
         toast.error(error.response.data.message);
         console.log(error);
       });
@@ -349,7 +354,7 @@ export default function GetAllBlogs() {
       </div>
       <div className="blogContiner2">
         {" "}
-        { blogArray.length == 0 ?<div style={{height:"40vh", justifyContent:'center', display:'flex', alignItems:"center"}} className='card-description' > no posts </div> : blogArray.map((i, index) => {
+        { mainLoader ? <div style={{height:"40vh", justifyContent:'center', display:'flex', alignItems:"center"}}><CircularProgress style={{color:'#26C6DA'}} /></div> : blogArray.length == 0 ?<div style={{height:"40vh", justifyContent:'center', display:'flex', alignItems:"center"}} className='card-description' > no posts </div> : blogArray.map((i, index) => {
           return (
             <div class="card">
               <div

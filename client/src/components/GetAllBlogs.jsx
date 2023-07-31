@@ -271,7 +271,7 @@ export default function GetAllBlogs() {
     <div>
           <Footer/>
           <div className="signInContainer roww">
-          <h2 className="card-title title-active">Instagram</h2>
+          <h2 className="card-title title-active">social media</h2>
       <ToastContainer />
       <div className="blogFirstContainer1Profile">
         <div className="blogContiner1">

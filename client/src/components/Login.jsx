@@ -5,21 +5,25 @@ import { ToastContainer, toast } from 'react-toastify';
 import backendURL from './config'
 import { useNavigate } from 'react-router-dom';
 import jwt_decode from "jwt-decode";
+import { CircularProgress } from '@mui/material';
 
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [user, setUser] = useState({});
+    const [loginFlag, setLoginFlag] = useState(false)
     const navigate = useNavigate();
     const handleSubmit = (e) => {
         e.preventDefault();
-
+        setLoginFlag(true)
         axios.post(`${backendURL}/api/login`, { email, password }).then((res) => {
+          setLoginFlag(false)
             toast.success('user logined')
             localStorage.setItem('userId', JSON.stringify(res.data.userExist))
             localStorage.setItem('token', res.data.token)
-            navigate('/Blogs')
+            navigate('/allBlogs')
         }).catch((error) => {
+          setLoginFlag(false)
             toast.error(error.response.data.message)
             console.log(error)
         })
@@ -59,6 +63,7 @@ export default function Login() {
       const responseSuccessGoogle = (response) => {
         var userObject = jwt_decode(response.credential);
         setUser(userObject);
+        setLoginFlag(true)
         axios
           .post(`${backendURL}/api/register/google`, {
             name: userObject.name,
@@ -67,6 +72,7 @@ export default function Login() {
             profile: userObject.picture,
           })
           .then((res) => {
+            setLoginFlag(false)
             toast.success("User created");
             localStorage.setItem("userId", JSON.stringify(res.data.newUser));
             localStorage.setItem("token", res.data.token);
@@ -74,6 +80,7 @@ export default function Login() {
             document.getElementById("signInDiv").hidden = true;
           })
           .catch((error) => {
+            setLoginFlag(false)
             toast.error(error.response.data.message);
             console.log(error);
           });
@@ -93,7 +100,7 @@ export default function Login() {
                     <label htmlFor="password">Password:</label>
                     <input className="inputDesign" type="password" id="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 </div>
-                <button className="singInButton" type="submit">login</button>
+                <button className="singInButton" type="submit">{loginFlag?<CircularProgress style={{color:'white'}} />:'login'}</button>
             </form>
             <div className="alreadyUser" style={{marginTop:'1rem', textDecoration:'underline'}}  onClick={() => {
               navigate("/fogot-password");

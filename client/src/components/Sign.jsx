@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import backendURL from "./config";
 import jwt_decode from "jwt-decode";
 import GoogleLogin from "react-google-login";
+import { CircularProgress } from '@mui/material';
 
 export default function SignIn() {
   const [name, setName] = useState("");
@@ -12,6 +13,7 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [profile, setProfile] = useState("");
   const [cover, setCover] = useState("");
+  const [signinFlag, setSigninFlag] = useState(false)
   const [user, setUser] = useState({});
   const navigate = useNavigate();
 
@@ -66,7 +68,7 @@ export default function SignIn() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    setSigninFlag(true)
     axios
       .post(`${backendURL}/api/register`, {
         name,
@@ -76,10 +78,12 @@ export default function SignIn() {
         cover,
       })
       .then((res) => {
+        setSigninFlag(false)
         toast.success("User created");
         navigate("/login");
       })
       .catch((error) => {
+        setSigninFlag(false)
         toast.error(error.response.data.message);
         console.log(error);
       });
@@ -88,6 +92,7 @@ export default function SignIn() {
   const responseSuccessGoogle = (response) => {
     var userObject = jwt_decode(response.credential);
     setUser(userObject);
+    setSigninFlag(true)
     axios
       .post(`${backendURL}/api/register/google`, {
         name: userObject.name,
@@ -96,6 +101,7 @@ export default function SignIn() {
         profile: userObject.picture,
       })
       .then((res) => {
+        setSigninFlag(false)
         toast.success("User created");
         localStorage.setItem("userId", JSON.stringify(res.data.newUser));
         localStorage.setItem("token", res.data.token);
@@ -103,6 +109,7 @@ export default function SignIn() {
         document.getElementById("signInDiv").hidden = true;
       })
       .catch((error) => {
+        setSigninFlag(false)
         toast.error(error.response.data.message);
         console.log(error);
       });
@@ -177,7 +184,7 @@ export default function SignIn() {
               required
             />
           </div>
-          <button className="singInButton" type="submit">Sign In</button>
+          <button className="singInButton" type="submit">{signinFlag? <CircularProgress style={{color:'white'}} /> : 'Sign In' }</button>
           <div className="alreadyUser" >already a user? <span onClick={() => {
               navigate("/login");
             }} style={{fontWeight:500, textDecoration:'underline', cursor:'pointer'}} > Login</span></div>

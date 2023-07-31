@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import backendURL from './config';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import Footer from './Footer';
+import {CircularProgress} from "@mui/material";
 
 export default function UpdateProfile() {
     const token = localStorage.getItem('token');
@@ -12,6 +13,7 @@ export default function UpdateProfile() {
   const [name, setName] = useState(user.name);
   const [profile, setProfile] = useState(user.profile);
   const [cover, setCover] = useState(user.cover); 
+  const [loader, setLoader] = useState(false)
   const navigate = useNavigate()
 
   const handleInputChange = (e) => {
@@ -40,9 +42,10 @@ const handleLogout = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    axios.post(`${backendURL}/api/update-profile/${user._id}`, { name,  profile, cover },{headers:{Authorization:token}})
+    setLoader(true)
+   return axios.post(`${backendURL}/api/update-profile/${user._id}`, { name,  profile, cover },{headers:{Authorization:token}})
       .then((res) => {
+        setLoader(false)
         toast.success(res.data.message);
         user.name = name;
         user.profile = profile;
@@ -50,6 +53,7 @@ const handleLogout = () => {
         localStorage.setItem('userId',JSON.stringify(user))
       })
       .catch((error) => {
+        setLoader(false)
         toast.error(error.response.data.message);
         console.log(error);
       });
@@ -113,8 +117,8 @@ const handleLogout = () => {
         <label style={{display:'flex', alignItems:'center', gap:'1rem'}} onClick={()=>{resetPassword()}} htmlFor="password">change password <ArrowForwardIosIcon style={{height:'20px', width:'20px'}} /> </label>
       </div>
       <div style={{display:'flex', alignItems:'center', justifyContent:'center', gap:'10px'}}>
-      <button className="singInButton" type="submit">save</button>
-      <button className="singInButton"  type="submit" onClick={handleLogout}>logout</button>
+      <button className="singInButton" style={{width:'100px'}} type="submit">{loader? <CircularProgress style={{color:'white', width:'20px', height:'20px'}}/>:'save'}</button>
+      <button className="singInButton" style={{width:'100px'}} type="submit" onClick={handleLogout}>logout</button>
       </div>
     </form>
   </div>

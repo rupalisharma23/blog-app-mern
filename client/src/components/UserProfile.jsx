@@ -20,6 +20,7 @@ import moment from "moment";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Footer from './Footer';
+import {CircularProgress} from "@mui/material";
 
 export default function UserProfile() {
   const [blogArray, setBlogArray] = useState([]);
@@ -34,6 +35,7 @@ export default function UserProfile() {
   const [likesFlag, setLikesFlag] = useState(false);
   const [indexForDeleteComment, setIndexForDeleteComment] = useState(0);
   const [commentFlag, setCommentFlag] = useState(false);
+  const [mainLoader, setMainLoader] = useState(false)
   const navigate = useNavigate();
   const params = useParams()
   useEffect(() => {
@@ -48,13 +50,15 @@ export default function UserProfile() {
 
 
   const getAllBlogController = () => {
-    axios
+    setMainLoader(true)
+   return axios
       .get(`${backendURL}/api/personal-blog/${params._id}`, {
         headers: {
           Authorization: token,
         },
       })
       .then((res) => {
+        setMainLoader(false)
         let temp = [];
         res.data.allBlogs.forEach((i) => {
           temp.push({ ...i, currentIndex: 0 })
@@ -62,6 +66,7 @@ export default function UserProfile() {
         setBlogArray(temp);
       })
       .catch((error) => {
+        setMainLoader(false)
         toast.error(error.response.data.message);
         console.log(error);
       });
@@ -284,7 +289,7 @@ export default function UserProfile() {
   return (
     <div>
       <Footer/>
-      <div className="signInContainer roww">
+     { mainLoader ? <div style={{height:"80vh", justifyContent:'center', display:'flex', alignItems:"center"}}><CircularProgress style={{color:'#26C6DA'}} /></div> : <div className="signInContainer roww">
   <ToastContainer />
   <div className="blogFirstContainer1Profile">
     <div className="blogContiner1">
@@ -330,7 +335,7 @@ export default function UserProfile() {
   </div>
   <div className="blogContiner2">
         {" "}
-        { blogArray.length == 0 ?<div style={{height:"40vh", justifyContent:'center', display:'flex', alignItems:"center"}} className='card-description' > no posts </div> : blogArray.map((i, index) => {
+        {  blogArray.length == 0 ?<div style={{height:"40vh", justifyContent:'center', display:'flex', alignItems:"center"}} className='card-description' > no posts </div> : blogArray.map((i, index) => {
           return (
             <div class="card">
               <div
@@ -654,7 +659,7 @@ export default function UserProfile() {
         </Dialog>
       </div>
       <div className="blogFirstContainer followersDeactive">
-        {  <div className="blogContiner1">
+        { Object.keys(userFollower).length>0 && <div className="blogContiner1">
            <h2>following</h2>
           { userFollower?.frineds?.length==0 ? <div className="card-description">no following</div>: userFollower?.frineds?.slice(0.5).map((friend) => {
             return (
@@ -906,7 +911,7 @@ export default function UserProfile() {
           })}
         </DialogContent>
       </Dialog>
-</div>
+</div>}
     </div>
   )
 }

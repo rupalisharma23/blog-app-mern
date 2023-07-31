@@ -65,6 +65,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-top: 2rem;
 }
 
 .singinContiner1{
@@ -73,6 +74,7 @@
   align-items: center;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   padding: 1rem;
+  margin-top: 2rem;
 }
 
 .loginContiner1{
@@ -325,6 +327,56 @@ input[type='file']::-webkit-file-upload-button{
   flex-direction: row;
 }
 
+.footer{
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  background: var(--background-color);
+  z-index: 99;
+}
+
+.nav-link.active{
+  color: var(--theme-blue);
+}
+
+.nav-link{
+  color: var(--text-color);
+}
+
+.footer  img{
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  object-fit: contain;
+  border: 1.5px solid var(--theme-blue);
+  cursor: pointer;
+}
+
+.footer> div{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icons{
+  height: 50px;
+  width: 50px;
+}
+
+.logo{
+  width:70%;
+  font-size: var(--font-medium-size);
+  display: flex;
+  align-items: center;
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.title-active{
+  display: none;
+}
+
 @media (max-width:1200px){
   .loginContiner1{
     width: 50%;
@@ -355,11 +407,15 @@ input[type='file']::-webkit-file-upload-button{
 
   .signInContainer{
     height: auto;
-    gap: 2rem;
+    gap: 1rem;
   }
 
   .blogFirstContainer1{
     display: none;
+  }
+
+  .logo{
+    width: 50%;
   }
 
 }
@@ -405,6 +461,16 @@ input[type='file']::-webkit-file-upload-button{
 
   .card-description{
     font-size: var(--font-small-size);
+  }
+
+  .logo{
+    display: none;
+  }
+
+  .title-active{
+    display: block;
+    font-size: var(--font-xl-size);
+    margin-top: 0;
   }
 }
 

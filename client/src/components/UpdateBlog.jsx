@@ -3,6 +3,8 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import backendURL from './config';
 import { useNavigate, useParams } from 'react-router-dom';
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import Footer from './Footer';
 
 export default function UpdateBlog() {
     const [title, setTitle] = useState('');
@@ -32,7 +34,7 @@ export default function UpdateBlog() {
                 reader.onload = () => {
                     imageUrls.push(reader.result);
                     if (imageUrls.length === selectedImages.length) {
-                        setImages(imageUrls);
+                        setImages((prevImages) => [...prevImages, ...imageUrls]);
                     }
                 };
             });
@@ -78,27 +80,42 @@ export default function UpdateBlog() {
                 console.log(error);
             });
     };
+
+    const removeImage = (index) =>{
+        setImages(images.filter((i,index1)=>{ return index1!==index}))
+    }
+
   return (
-      <form onSubmit={handleSubmit} >
+    <div>
+        <Footer/>
+            <div className="signInContainer">
+        <div className="loginContiner1">
+        <h2>edit post</h2>
+        <form className="formContainer" onSubmit={handleSubmit} >
           <ToastContainer />
-          <div>
+          <div className="verticalAlign">
               <label htmlFor="title">Title:</label>
-              <input type="text" id="title" name="title" value={title} onChange={handleInputChange} required />
+              <input className="inputDesign" type="text" id="title" name="title" value={title} onChange={handleInputChange} required />
           </div>
-          <div>
+          <div className="verticalAlign">
               <label htmlFor="description">Description:</label>
-              <textarea id="description" name="description" value={description} onChange={handleInputChange} required />
+              <input className="inputDesign" id="description" name="description" value={description} onChange={handleInputChange} required />
           </div>
-          <div>
-              <label htmlFor="images">Images:</label>
-              <input type="file" id="images" name="images" accept="image/*" multiple onChange={handleInputChange} />
+          <div className="verticalAlign">
+              {/* <label htmlFor="images">Images:</label>
+              <input type="file" id="images" name="images" accept="image/*" multiple onChange={handleInputChange} /> */}
+               <label style={{fontSize:'15px'}} htmlFor="images"><AddPhotoAlternateIcon style={{height:'2rem', width:'2rem', cursor:'pointer'}}/> {images.length>0 && <div>{`${images.length} selected`}</div>} </label>
+                <input  style={{display:'none'}}  type="file" id="images" name="images" accept="image/*" multiple onChange={handleInputChange}  />
           </div>
-          <div>
+          <div className="horizontalAlign">
               {images.map((image, index) => (
-                  <img key={index} src={image} alt={`Image ${index}`} />
+                  <div style={{position:'relative'}}> <img key={index} src={image} alt={`Image ${index}`} /> <div style={{position:'absolute', top:'-10px', right:'-5px', cursor:'pointer'}} onClick={()=>{removeImage(index)}} > <i className='fa fa-times'></i> </div> </div>
               ))}
           </div>
-          <button type="submit">Submit</button>
+          <button  className="singInButton" type="submit">Submit</button>
       </form>
+        </div>
+    </div>
+    </div>
   )
 }

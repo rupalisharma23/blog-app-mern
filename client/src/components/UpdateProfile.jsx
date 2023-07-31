@@ -4,6 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import backendURL from './config';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import Footer from './Footer';
 
 export default function UpdateProfile() {
     const token = localStorage.getItem('token');
@@ -61,7 +62,9 @@ const handleLogout = () => {
     })
   }
   return (
-  <div className="signInContainer">
+    <div>
+      <Footer/>
+      <div className="signInContainer" style={{height:'auto'}}>
   <ToastContainer />
   <div className="loginContiner1">
     <div style={{width:'100%'}}>
@@ -106,7 +109,7 @@ const handleLogout = () => {
         />
       </div>
       <div className="verticalAlign">
-        <label style={{display:'flex', alignItems:'center'}} onClick={()=>{resetPassword()}} htmlFor="password">change password <ArrowForwardIosIcon/> </label>
+        <label style={{display:'flex', alignItems:'center', gap:'1rem'}} onClick={()=>{resetPassword()}} htmlFor="password">change password <ArrowForwardIosIcon style={{height:'20px', width:'20px'}} /> </label>
       </div>
       <div style={{display:'flex', alignItems:'center', justifyContent:'center', gap:'10px'}}>
       <button className="singInButton" type="submit">save</button>
@@ -115,5 +118,6 @@ const handleLogout = () => {
     </form>
   </div>
 </div>
+    </div>
   )
 }

@@ -9,7 +9,7 @@ export default function Footer() {
   return (
     <div className='footer'>
       <div>
-      <Link to='/allBlogs' className="card-title logo" href="#"><div className="card-title logo">instagram</div></Link>
+      <Link to='/allBlogs' className="card-title logo" href="#"><div className="card-title logo">social media</div></Link>
         <NavLink style={{ width: 'max-content' }} to='/allBlogs' className="nav-link" aria-current="page" href="#"> <HomeOutlinedIcon style={{height:'30px', width:'30px', cursor:'pointer'}}/></NavLink>
         <NavLink style={{ width: 'max-content' }} to='/Blogs' className="nav-link" aria-current="page" href="#"> <AddBoxOutlinedIcon style={{height:'30px', width:'30px', cursor:'pointer'}}/></NavLink>
         <NavLink style={{ width: 'max-content' }} to='/discover' className="nav-link" aria-current="page" href="#"><PersonAddAltOutlinedIcon style={{height:'30px', width:'30px', cursor:'pointer'}}/></NavLink>

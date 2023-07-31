@@ -15,11 +15,13 @@ export default function ForgotPassword() {
     })
   }
   return (
-    <div>
+    <div className="signInContainer">
         < ToastContainer/>
-      <div>
-        <label htmlFor="email">Email:</label>
+      <div className="loginContiner1">
+      <div className="verticalAlign" style={{width:'100%'}}>
+      <label htmlFor="email">Email:</label>
         <input
+         className="inputDesign"
           type="email"
           id="email"
           name="email"
@@ -27,7 +29,8 @@ export default function ForgotPassword() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <button onClick={()=>{resetPassword()}} >reset password</button>
+      </div>
+        <button className="singInButton" style={{marginTop:'2rem'}} onClick={()=>{resetPassword()}} >reset password</button>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import backendURL from './config';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import Footer from "./Footer";
 
 export default function Blog() {
     const [title, setTitle] = useState('');
@@ -63,7 +64,9 @@ export default function Blog() {
     }
 
     return (
-        <div className="signInContainer">
+        <div>
+            <Footer/>
+            <div className="signInContainer" style={{height:'auto'}}>
             <div className="loginContiner1">
                 <h2>create post</h2>
             <form className="formContainer" onSubmit={handleSubmit}>
@@ -90,6 +93,6 @@ export default function Blog() {
             </div>
            
         </div>
-        
+        </div>        
     );
 }

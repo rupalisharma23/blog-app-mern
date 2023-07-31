@@ -17,6 +17,9 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import SendIcon from "@mui/icons-material/Send";
 import moment from "moment";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Footer from './Footer';
 
 export default function UserProfile() {
   const [blogArray, setBlogArray] = useState([]);
@@ -24,8 +27,8 @@ export default function UserProfile() {
   const user = JSON.parse(localStorage.getItem('userId'));
   const [likesArray, setLikesArray] = useState([]);
   const [commentArray, setCommentsArray] = useState([]);
-  const [users,setUsers] = useState([]);
   const [userList, setUserList] = useState({});
+  const [userFollower, setUserFollower] = useState({});
   const [flag, setFlag] = useState(false);
   const [followerFlag, setFollowerFlag] = useState(false);
   const [likesFlag, setLikesFlag] = useState(false);
@@ -36,7 +39,7 @@ export default function UserProfile() {
   useEffect(() => {
     getAllBlogController();
     userProfile();
-    getAllUsers();
+    followerProfile()
     setFlag(false);
     setFollowerFlag(false);
     setLikesFlag(false);
@@ -78,21 +81,20 @@ export default function UserProfile() {
       });
   };
 
-  const getAllUsers = () => {       
-    axios
-        .get(`${backendURL}/api/blog-users/${user._id}`, {
-            headers: {
-                Authorization: token,
-            },
-        })
-        .then((res) => {
-            setUsers(res.data.allUsers)
-        })
-        .catch((error) => {
-            toast.error(error.response.data.message);
-            console.log(error);
-        });
-};
+  const followerProfile = () => {
+    return axios
+      .get(`${backendURL}/api/user-profile/${params._id}`, {
+        headers: { Authorization: token },
+      })
+      .then((res) => {
+        setUserFollower(res.data.userExist);
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+        console.log(error);
+      });
+  };
+
 
   const addComment = (_id, value, index, name) => {
     let comments = {
@@ -205,7 +207,6 @@ export default function UserProfile() {
       .then((res) => {
         getAllBlogController();
         userProfile();
-        // getAllUsers();
       })
       .catch((error) => {
         toast.error(error.response.data.message);
@@ -214,8 +215,6 @@ export default function UserProfile() {
   };
 
   const sendRequest = (userDetail, likeFlag) => {
-    let temp = users.filter((i) => { return i._id !== userDetail._id })
-    setUsers(temp)
     user.frineds.push(userDetail)
     localStorage.setItem('userId', JSON.stringify(user))
     return axios
@@ -234,7 +233,25 @@ export default function UserProfile() {
       .then((res) => {
         getAllBlogController();
         userProfile();
-        // getAllUsers();
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+        console.log(error);
+      });
+  };
+
+  const deleteBlog = (_id, index) => {
+    let temp = blogArray.filter((i)=>{return i._id!==_id })
+    setBlogArray(temp)
+
+   return axios
+      .delete(`${backendURL}/api/single-blog/${_id}`, {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((res) => {
+        toast.success("deleted");
       })
       .catch((error) => {
         toast.error(error.response.data.message);
@@ -265,32 +282,35 @@ export default function UserProfile() {
   };
 
   return (
-  <div className="signInContainer roww">
+    <div>
+      <Footer/>
+      <div className="signInContainer roww">
   <ToastContainer />
   <div className="blogFirstContainer1Profile">
     <div className="blogContiner1">
       <div style={{ width: "100%" }}>
         <img
-          src={blogArray[0]?.userId.cover ? blogArray[0]?.userId.cover : "coverpicture.jpg"}
+          src={userFollower?.cover ? userFollower?.cover : "coverpicture.jpg"}
           className="coverImagClass"
           alt=""
         />
       </div>
       <div className="upload">
         <img
-          src={blogArray[0]?.userId.profile ? blogArray[0]?.userId.profile : "profilepicture.jpg"}
+          src={userFollower?.profile ? userFollower?.profile : "profilepicture.jpg"}
           alt=""
         />
       </div>
       <form className="formContainer">
-        <div className="verticalAlign" style={{ textAlign: "center" }}>
+        <div className="verticalAlign" style={{ textAlign: "center", flexDirection:'row', justifyContent:'center', position:'relative' }}>
           <label htmlFor="name" style={{ fontSize: "15px" }}>
-            Name: {blogArray[0]?.userId.name}
+            Name: {userFollower?.name}
           </label>
+         { user._id == params._id &&  <div style={{position:'absolute', right:'0', cursor:'pointer'}} onClick={()=>{navigate('/update-profile')}} > <EditIcon/></div> }
         </div>
         <div className="verticalAlign" style={{ textAlign: "center" }}>
           <label htmlFor="email" style={{ fontSize: "15px" }}>
-            Email: {blogArray[0]?.userId.email}
+            Email: {userFollower?.email}
           </label>
         </div>
         <div style={{ display: "flex" }}>
@@ -300,9 +320,9 @@ export default function UserProfile() {
           </div>
         </div>
         <div style={{ display: "flex", marginTop: "-1rem" }}>
-          <div className="following"> <div  onClick={()=>{setFlag(true)}}>{blogArray[0]?.userId.frineds?.length}</div> </div>
+          <div className="following"> <div  onClick={()=>{setFlag(true)}}>{userFollower?.frineds?.length}</div> </div>
           <div className="following" style={{ border: "none" }}>
-           <div onClick={()=>{setFollowerFlag(true)}} >{blogArray[0]?.userId.follower?.length}</div> 
+           <div onClick={()=>{setFollowerFlag(true)}} >{userFollower?.follower?.length}</div> 
           </div>
         </div>
       </form>
@@ -310,13 +330,14 @@ export default function UserProfile() {
   </div>
   <div className="blogContiner2">
         {" "}
-        {blogArray.map((i, index) => {
+        { blogArray.length == 0 ?<div style={{height:"40vh", justifyContent:'center', display:'flex', alignItems:"center"}} className='card-description' > no posts </div> : blogArray.map((i, index) => {
           return (
             <div class="card">
               <div
                 className="friends_design"
-                style={{ marginBottom: "1rem", justifyContent: "flex-start" }}
+                style={{ marginBottom: "1rem", justifyContent: "space-between", width:'100%' }}
               >
+                <div style={{display:'flex', gap:"1rem"}}>
                 <img
                   src={
                     i.userId.profile ? i.userId.profile : "profilepicture.jpg"
@@ -327,13 +348,26 @@ export default function UserProfile() {
                   }}
                 />
                 <div>
-                  {i.userId.name}
+                 <span onClick={() => {
+                    navigate(`/user-profile/${i.userId._id}`);
+                  }}>{i.userId.name}</span> 
                   <div>
                     {moment(i.createdAt).format("DD/MM/YYYY hh:mm a")}
                   </div>{" "}
                 </div>
+                </div>
+                <div>
+               { i.userId._id == user._id && ( <>
+                <EditIcon  onClick={() => {
+                navigate(`/single-blog/${i._id}`);
+              }}/>
+                <DeleteIcon  onClick={() => {
+                deleteBlog(i._id, index);
+              }} style={{color:"red", marginLeft:"10px"}}/>
+               </>)}
+                </div>
               </div>
-              <div class="swiper-container">
+              {i.images.length>0 && <div class="swiper-container">
                 {i.images.length > 1 && (
                   <div
                     onClick={() => {
@@ -372,7 +406,7 @@ export default function UserProfile() {
                     />
                   </div>
                 )}
-              </div>
+              </div>}
               <h2 className="card-title">{i.title}</h2>
               <p className="card-description">{i.description}</p>
               <div>
@@ -503,12 +537,14 @@ export default function UserProfile() {
                       }
                       alt=""
                     />
-                    {friend.name}
+                   <span  onClick={() => {
+                        navigate(`/user-profile/${friend.userId}`);
+                      }}>{friend.name}</span> 
                   </div>
                   {user._id !== friend.userId && (
                     <button
                       onClick={() => {
-                        userList?.frineds.some((i) => {
+                        userList?.frineds?.some((i) => {
                           return i._id == friend.userId;
                         })
                           ? sendUnFollowRequest(friend, "likes")
@@ -593,7 +629,9 @@ export default function UserProfile() {
                           alt=""
                         />{" "}
                         <div>
-                          {comment.name}
+                         <span onClick={() => {
+                            navigate(`/user-profile/${comment.userId}`);
+                          }}>{comment.name}</span> 
                           <div style={{ fontWeight: "300" }}>
                             {comment.comment}
                           </div>{" "}
@@ -616,9 +654,9 @@ export default function UserProfile() {
         </Dialog>
       </div>
       <div className="blogFirstContainer followersDeactive">
-        { blogArray.length>0 && <div className="blogContiner1">
+        {  <div className="blogContiner1">
            <h2>following</h2>
-          { blogArray[0]?.userId.frineds.length==0 ? <div className="card-description">no following</div>: blogArray[0]?.userId.frineds?.slice(0.5).map((friend) => {
+          { userFollower?.frineds?.length==0 ? <div className="card-description">no following</div>: userFollower?.frineds?.slice(0.5).map((friend) => {
             return (
               <div className="friends_design">
                 <div
@@ -630,11 +668,13 @@ export default function UserProfile() {
                       navigate(`/user-profile/${friend._id}`);
                     }}
                   />
-                  {friend.name}
+                 <span  onClick={() => {
+                      navigate(`/user-profile/${friend._id}`);
+                    }}>{friend.name}</span> 
                 </div>
                 {user._id !==friend._id && <button
                       onClick={() => {
-                        userList?.frineds.some((i) => {
+                        userList?.frineds?.some((i) => {
                           return i._id == friend._id;
                         })
                           ? sendUnFollowRequest(friend)
@@ -651,7 +691,7 @@ export default function UserProfile() {
               </div>
             );
           })}
-          {blogArray[0]?.userId.frineds?.length > 0 && (
+          {userFollower?.frineds?.length > 5 && (
             <div
               className="friends_design"
               onClick={() => {
@@ -662,7 +702,7 @@ export default function UserProfile() {
             </div>
           )}
            <h2>followers</h2>
-          { blogArray[0]?.userId.follower.length==0 ? <div className="card-description">no followers</div>:  blogArray[0]?.userId.follower?.map((friend) => {
+          { userFollower?.follower?.length==0 ? <div className="card-description">no followers</div>:  userFollower?.follower?.slice(0.5).map((friend) => {
             return (
               <div className="friends_design">
                 <div
@@ -675,11 +715,13 @@ export default function UserProfile() {
                     src={friend.profile ? friend.profile : "profilepicture.jpg"}
                     alt=""
                   />
-                  {friend.name}{" "}
+                 <span  onClick={() => {
+                      navigate(`/user-profile/${friend._id}`);
+                    }}>{friend.name}{" "}</span> 
                 </div>
                {user._id !== friend._id && <button
                       onClick={() => {
-                        userList?.frineds.some((i) => {
+                        userList?.frineds?.some((i) => {
                           return i._id == friend._id;
                         })
                           ? sendUnFollowRequest(friend)
@@ -687,7 +729,7 @@ export default function UserProfile() {
                       }}
                       className="smallButton"
                     >
-                      {userList?.frineds.some((i) => {
+                      {userList?.frineds?.some((i) => {
                         return i._id == friend._id;
                       })
                         ? "unfollow"
@@ -696,7 +738,7 @@ export default function UserProfile() {
               </div>
             );
           })}
-          {blogArray[0]?.userId.follower?.length > 0 && (
+          {userFollower?.follower?.length > 5 && (
             <div
               className="friends_design"
               onClick={() => {
@@ -748,7 +790,7 @@ export default function UserProfile() {
         </DialogTitle>
         <DialogContent>
           <h2>following</h2>
-          {blogArray[0]?.userId.frineds?.map((friend) => {
+          {userFollower?.frineds?.map((friend) => {
             return (
               <div className="friends_design">
                 <div
@@ -761,11 +803,13 @@ export default function UserProfile() {
                     src={friend.profile ? friend.profile : "profilepicture.jpg"}
                     alt=""
                   />
-                  {friend.name}
+                <span onClick={() => {
+                      navigate(`/user-profile/${friend._id}`);
+                    }}>{friend.name}</span>  
                 </div>
                 {user._id !== friend._id && <button
                       onClick={() => {
-                        userList?.frineds.some((i) => {
+                        userList?.frineds?.some((i) => {
                           return i._id == friend._id;
                         })
                           ? sendUnFollowRequest(friend)
@@ -773,7 +817,7 @@ export default function UserProfile() {
                       }}
                       className="smallButton"
                     >
-                      {userList?.frineds.some((i) => {
+                      {userList?.frineds?.some((i) => {
                         return i._id == friend._id;
                       })
                         ? "unfollow"
@@ -824,7 +868,7 @@ export default function UserProfile() {
         </DialogTitle>
         <DialogContent>
           <h2>followers</h2>
-          {blogArray[0]?.userId.follower?.map((friend) => {
+          {userFollower?.follower?.map((friend) => {
             return (
               <div className="friends_design">
                 <div
@@ -837,11 +881,13 @@ export default function UserProfile() {
                     src={friend.profile ? friend.profile : "profilepicture.jpg"}
                     alt=""
                   />
-                  {friend.name}
+                <span  onClick={() => {
+                      navigate(`/user-profile/${friend._id}`);
+                    }}> {friend.name}</span> 
                 </div>
                 {user._id !== friend._id && <button
                       onClick={() => {
-                        userList?.frineds.some((i) => {
+                        userList?.frineds?.some((i) => {
                           return i._id == friend._id;
                         })
                           ? sendUnFollowRequest(friend)
@@ -849,7 +895,7 @@ export default function UserProfile() {
                       }}
                       className="smallButton"
                     >
-                      {userList?.frineds.some((i) => {
+                      {userList?.frineds?.some((i) => {
                         return i._id == friend._id;
                       })
                         ? "unfollow"
@@ -861,5 +907,6 @@ export default function UserProfile() {
         </DialogContent>
       </Dialog>
 </div>
+    </div>
   )
 }

@@ -15,6 +15,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import SendIcon from "@mui/icons-material/Send";
 import moment from "moment";
+import Footer from "./Footer";
 
 export default function GetAllBlogs() {
   const [blogArray, setBlogArray] = useState([]);
@@ -267,7 +268,10 @@ export default function GetAllBlogs() {
   };
 
   return (
-    <div className="signInContainer roww">
+    <div>
+          <Footer/>
+          <div className="signInContainer roww">
+          <h2 className="card-title title-active">Instagram</h2>
       <ToastContainer />
       <div className="blogFirstContainer1Profile">
         <div className="blogContiner1">
@@ -311,7 +315,7 @@ export default function GetAllBlogs() {
         </div>
        { users.length > 0 && <div className="blogContiner1 blogFirstContainer1" style={{width:'90%', gap:'0', height:'auto'}}>
           <h2>people you may know</h2>
-          {users.map((user)=>{
+          {users.slice(0.5).map((user)=>{
             return(
                 <div  className="friends_design">
                                     <div
@@ -323,13 +327,15 @@ export default function GetAllBlogs() {
                       navigate(`/user-profile/${user._id}`);
                     }}
                   />
-                  {user.name}
+                 <span onClick={() => {
+                      navigate(`/user-profile/${user._id}`);
+                    }}>{user.name}</span> 
                 </div>
                 <button className="smallButton" onClick={()=>{sendRequest(user)}}>follow</button>
                 </div>
             )
         })}
-         {users.length > 0 && (
+         {users.length > 3 && (
             <div
               className="friends_design"
               onClick={() => {
@@ -343,7 +349,7 @@ export default function GetAllBlogs() {
       </div>
       <div className="blogContiner2">
         {" "}
-        {blogArray.map((i, index) => {
+        { blogArray.length == 0 ?<div style={{height:"40vh", justifyContent:'center', display:'flex', alignItems:"center"}} className='card-description' > no posts </div> : blogArray.map((i, index) => {
           return (
             <div class="card">
               <div
@@ -360,13 +366,15 @@ export default function GetAllBlogs() {
                   }}
                 />
                 <div>
-                  {i.userId.name}
+                 <span  onClick={() => {
+                    navigate(`/user-profile/${i.userId._id}`);
+                  }}>{i.userId.name}</span> 
                   <div>
                     {moment(i.createdAt).format("DD/MM/YYYY hh:mm a")}
                   </div>{" "}
                 </div>
               </div>
-              <div class="swiper-container">
+              { i.images.length>0 && <div class="swiper-container">
                 {i.images.length > 1 && (
                   <div
                     onClick={() => {
@@ -405,7 +413,7 @@ export default function GetAllBlogs() {
                     />
                   </div>
                 )}
-              </div>
+              </div>}
               <h2 className="card-title">{i.title}</h2>
               <p className="card-description">{i.description}</p>
               <div>
@@ -536,7 +544,9 @@ export default function GetAllBlogs() {
                       }
                       alt=""
                     />
-                    {friend.name}
+                   <span  onClick={() => {
+                        navigate(`/user-profile/${friend.userId}`);
+                      }}>{friend.name}</span> 
                   </div>
                   {user._id !== friend.userId && (
                     <button
@@ -626,7 +636,9 @@ export default function GetAllBlogs() {
                           alt=""
                         />{" "}
                         <div>
-                          {comment.name}
+                         <span onClick={() => {
+                            navigate(`/user-profile/${comment.userId}`);
+                          }}>{comment.name}</span> 
                           <div style={{ fontWeight: "300" }}>
                             {comment.comment}
                           </div>{" "}
@@ -663,7 +675,9 @@ export default function GetAllBlogs() {
                       navigate(`/user-profile/${friend._id}`);
                     }}
                   />
-                  {friend.name}
+                 <span  onClick={() => {
+                      navigate(`/user-profile/${friend._id}`);
+                    }}>{friend.name}</span> 
                 </div>
                 <button
                   className="smallButton"
@@ -676,7 +690,7 @@ export default function GetAllBlogs() {
               </div>
             );
           })}
-          {userList?.frineds?.length > 0 && (
+          {userList?.frineds?.length > 5 && (
             <div
               className="friends_design"
               onClick={() => {
@@ -687,7 +701,7 @@ export default function GetAllBlogs() {
             </div>
           )}
            <h2>followers</h2>
-          { userList?.follower.length==0 ? <div className="card-description">no followers</div>:  userList?.follower?.map((friend) => {
+          { userList?.follower.length==0 ? <div className="card-description">no followers</div>:  userList?.follower?.slice(0.5).map((friend) => {
             return (
               <div className="friends_design">
                 <div
@@ -700,7 +714,9 @@ export default function GetAllBlogs() {
                     src={friend.profile ? friend.profile : "profilepicture.jpg"}
                     alt=""
                   />
-                  {friend.name}{" "}
+                 <span  onClick={() => {
+                      navigate(`/user-profile/${friend._id}`);
+                    }}>{friend.name}{" "}</span> 
                 </div>
                 <button
                   onClick={() => {
@@ -721,7 +737,7 @@ export default function GetAllBlogs() {
               </div>
             );
           })}
-          {userList?.follower?.length > 0 && (
+          {userList?.follower?.length > 5 && (
             <div
               className="friends_design"
               onClick={() => {
@@ -786,7 +802,9 @@ export default function GetAllBlogs() {
                     src={friend.profile ? friend.profile : "profilepicture.jpg"}
                     alt=""
                   />
-                  {friend.name}
+                 <span  onClick={() => {
+                      navigate(`/user-profile/${friend._id}`);
+                    }}>{friend.name}</span> 
                 </div>
                 <button
                   className="smallButton"
@@ -854,7 +872,9 @@ export default function GetAllBlogs() {
                     src={friend.profile ? friend.profile : "profilepicture.jpg"}
                     alt=""
                   />
-                  {friend.name}
+                 <span  onClick={() => {
+                      navigate(`/user-profile/${friend._id}`);
+                    }}>{friend.name}</span> 
                 </div>
                 <button
                   onClick={() => {
@@ -930,7 +950,9 @@ export default function GetAllBlogs() {
                     src={friend.profile ? friend.profile : "profilepicture.jpg"}
                     alt=""
                   />
-                  {friend.name}
+                 <span  onClick={() => {
+                      navigate(`/user-profile/${friend._id}`);
+                    }}>{friend.name}</span> 
                 </div>
                 <button className="smallButton" onClick={()=>{sendRequest(user)}}>follow</button>
               </div>
@@ -939,5 +961,7 @@ export default function GetAllBlogs() {
         </DialogContent>
       </Dialog>
     </div>
+    </div>
+
   );
 }

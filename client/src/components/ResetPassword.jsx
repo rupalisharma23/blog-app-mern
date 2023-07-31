@@ -26,10 +26,13 @@ export default function ResetPassword() {
       });
   };
   return (
-    <div>
+    <div className="signInContainer">
       <ToastContainer />
+      <div className="loginContiner1">
+      <div className="verticalAlign" style={{width:'100%'}}>
       <label htmlFor="password">Password:</label>
       <input
+       className="inputDesign"
         type="password"
         id="password"
         name="password"
@@ -37,13 +40,15 @@ export default function ResetPassword() {
         onChange={(e) => setPassword(e.target.value)}
         required
       />
+      </div>
       <button
         onClick={() => {
           changePassword();
-        }}
+        }} className="singInButton" style={{marginTop:'2rem'}}
       >
         change password
       </button>
+      </div>
     </div>
   );
 }

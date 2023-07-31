@@ -97,7 +97,7 @@ const forgotPassword = async(req,res) =>{
     }
     else{
       const token = jwt.sign({ _id: userExist._id }, process.env.JWT_SECRET,{expiresIn:"5m"});
-      const link = `http://localhost:3000/#/reset-password/${userExist._id}/${token}`
+      const link = `https://blog-frontend-ly3i.onrender.com/#/reset-password/${userExist._id}/${token}`
       var transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {

@@ -1,5 +1,5 @@
 let backendURL;
 
-backendURL = "http://localhost:8080";
+backendURL = "https://blog-backend-01m4.onrender.com";
 
 export default backendURL;

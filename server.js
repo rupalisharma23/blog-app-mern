@@ -11,6 +11,7 @@ const PORT = process.env.PORT || 8080;
 
 const app = express();
 const allowedOrigins = [
+  "https://blog-frontend-ly3i.onrender.com",
   "http://localhost:3000"
 ];
 

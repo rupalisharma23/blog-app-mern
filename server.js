@@ -3,7 +3,8 @@ const dotenv = require('dotenv');
 const mongoConnection = require("./config/db");
 const userRouter = require('./routes/userRoute');
 const blogRouter = require('./routes/blogRoute');
-const friendsRoures = require('./routes/friendsRoute')
+const friendsRoures = require('./routes/friendsRoute');
+const chatRoutes = require('./routes/ChatRoutes')
 const cors = require('cors')
 dotenv.config()
 mongoConnection();
@@ -40,6 +41,7 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use('/api',userRouter)
 app.use('/api',blogRouter)
 app.use("/api", friendsRoures);
+app.use("/api", chatRoutes);
 
 app.listen(PORT, () => {
   console.log(`running on ${PORT}`);

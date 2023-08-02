@@ -8,10 +8,10 @@ import { useEffect, useState } from 'react';
 export default function Footer() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("userId")));
 
-  useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("userId"));
-    setUser(userData);
-  }, [user]);
+  // useEffect(() => {
+  //   const userData = JSON.parse(localStorage.getItem("userId"));
+  //   setUser(userData);
+  // }, [user]);
   return (
     <div className='footer'>
       <div>

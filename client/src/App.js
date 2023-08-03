@@ -12,6 +12,7 @@ import UserProfile from './components/UserProfile';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import UpdateProfile from './components/UpdateProfile';
+import Chat from './components/Chat';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/fogot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:_id/:token" element={<ResetPassword />} />
         <Route path="/update-profile" element={<UpdateProfile />} />
+        <Route path="/chat" element={<Chat />} />
       </Routes>
     </>
   );

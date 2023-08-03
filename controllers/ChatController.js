@@ -23,7 +23,7 @@ const createChat = async(req,res) =>{
 const findAllChatsOfOneUser = async(req,res) =>{
     try{
         const {_id} = req.params;
-        const findChat = await chats.find({members:{$in:[_id]}})
+        const findChat = await chats.find({members:{$in:[_id]}}).populate({path:'members',select:{password:0,frineds:0,follower:0, cover:0, profile:0}})
         res.status(200).send({chat:findChat})
     }
     catch(error){

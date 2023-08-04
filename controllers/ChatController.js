@@ -1,5 +1,6 @@
 const chats = require('../models/ChatModel');
-const messages = require('../models/MessageModel')
+const messages = require('../models/MessageModel');
+const User = require("../models/user");
 
 const createChat = async(req,res) =>{
     try{
@@ -62,5 +63,15 @@ const getMessages = async(req,res) =>{
     }
 }
 
+const getAllUsers = async(req,res)=>{
+    try{
+         const allUsers = await User.find({}).select({password:0,profile:0,cover:0,frineds:0,follower:0})
+         res.status(200).send({allUsers})
 
-module.exports= {createChat,findAllChatsOfOneUser,findChatOfSpecificUser,sendMessages,getMessages}
+    }catch(error){
+        console.log('error in getAllUsers',getAllUsers)
+        res.status(400).send({error})
+    }
+}
+
+module.exports= {createChat,findAllChatsOfOneUser,findChatOfSpecificUser,sendMessages,getMessages,getAllUsers}

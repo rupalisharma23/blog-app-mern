@@ -63,7 +63,6 @@ export default function Chat() {
   }, [messages]);
 
   console.log('onlineUsers',onlineUsers)
-  console.log('messages',messages)
 
   const ChatUser = () => {
     return axios

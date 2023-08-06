@@ -22,7 +22,7 @@ socket.on('sendMessages',({senderId,recieverId,message})=>{
   const user = onlineUsers.find((user) => { return user.userId == recieverId} );
   if(user){
     io.to(user.socketId).emit('getMessages',{
-      senderId,message
+      senderId,message, date:new Date()
     })
   }
 })

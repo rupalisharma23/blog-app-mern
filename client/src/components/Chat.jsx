@@ -3,7 +3,9 @@ import axios from "axios";
 import backendURL from "./config";
 import Footer from "./Footer";
 import SendIcon from "@mui/icons-material/Send";
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
+import {socket} from './SocketCode';
+import moment from "moment";
 
 export default function Chat() {
   const [allChatUsers, setAllChatUsers] = useState([]);
@@ -13,9 +15,11 @@ export default function Chat() {
   const [textMessage, setTextMessage] = useState("");
   const [recieverId, setRecieverId] = useState("");
   const [chatId, setChatId] = useState("");
+  const [chatName, setChatName] = useState("");
   const[ currentChat, setCurrentChat] = useState(null)
-  const [onlineUsers, setOnlineUsers] = useState([])
-  const socket = useRef(io('ws://localhost:5000'))
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const[notification, setNotifications] = useState([]);
+  // const socket = useRef(io('ws://localhost:5000'))
   let user = JSON.parse(localStorage.getItem("userId"));
   let scroll = useRef(null);
 
@@ -24,29 +28,61 @@ export default function Chat() {
   }, []);
 
   useEffect(() => {
-    socket.current.emit('onlineUsers', user._id);
-    socket.current.on('getMessages', data=>{
+    socket.emit('onlineUsers', user._id);
+    socket.on('getMessages', data=>{
       setArrivalMessage({
         senderId:data.senderId,
-        message:data.message
+        message:data.message,
+        date:data.date
       })
     })
-    return () => {}; // No socket disconnect in this cleanup function
+    return () => {socket.off('getMessages')}; // No socket disconnect in this cleanup function
   }, []);
 
   useEffect(()=>{
-    arrivalMessage && currentChat?.members.some((i)=>{return i._id == arrivalMessage.senderId}) && setMessages((pre)=>[...pre,arrivalMessage])
+    arrivalMessage && (currentChat?.members.some((i)=>{return i._id == arrivalMessage.senderId}) && setMessages((pre)=>[...pre,arrivalMessage]))
+    arrivalMessage && updateCreatedAt()
   },[arrivalMessage, currentChat])
+
+  useEffect(()=>{
+    arrivalMessage && !currentChat?.members.some((i)=>{return i._id == arrivalMessage.senderId}) &&  setNotifications((pre)=>[...pre,arrivalMessage]) 
+    arrivalMessage && updateCreatedAt()
+  },[arrivalMessage])
+
+  const updateCreatedAt = () => {
+    setAllChatUsers((prevAllChatUsers) => {
+      return prevAllChatUsers.map((chat) => {
+        const updatedMembers = chat.members.map((member) => {
+          if (member._id === arrivalMessage.senderId) {
+            return { ...member, updatedAt: arrivalMessage.date, lastMessage:arrivalMessage.message };
+          }
+          return member;
+        });
   
+        return {
+          ...chat,
+          members: updatedMembers,
+          updatedAt:
+            chat.members.some((member) => member._id === arrivalMessage.senderId)
+              ? arrivalMessage.date
+              : chat.updatedAt,
+          lastMessage:chat.members.some((member) => member._id === arrivalMessage.senderId)
+          ? arrivalMessage.message
+          : chat.lastMessage,
+        };
+      });
+    });
+  };
+    
   useEffect(() => {
     const handleOnlineUsers = (res) => {
       setOnlineUsers(res);
     };
   
-    socket.current.on('getOnlineUsers', handleOnlineUsers);
+    socket.on('getOnlineUsers', handleOnlineUsers);
   
     return () => {
-      socket.current.off('getOnlineUsers', handleOnlineUsers);
+      socket.off('getOnlineUsers', handleOnlineUsers);
     };
   }, []);
 
@@ -62,7 +98,6 @@ export default function Chat() {
     scrollToBottom();
   }, [messages]);
 
-  console.log('onlineUsers',onlineUsers)
 
   const ChatUser = () => {
     return axios
@@ -75,6 +110,7 @@ export default function Chat() {
         console.log(error);
       });
   };
+
 
   const allUser = (allChatUser) => {
     return axios
@@ -114,11 +150,45 @@ export default function Chat() {
 
   const sendMessages = () => {
 
-    socket.current.emit('sendMessages',{
+    socket.emit('sendMessages',{
       senderId: user._id,
       recieverId,
       message: textMessage,
     })
+
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      {
+        senderId: user._id,
+        recieverId,
+        chatId,
+        message: textMessage,
+      },
+    ]);
+    setTextMessage('')
+
+    setAllChatUsers((prevAllChatUsers) => {
+      return prevAllChatUsers.map((chat) => {
+        const updatedMembers = chat.members.map((member) => {
+          if (member._id === recieverId ) {
+            return { ...member, updatedAt: new Date(), lastMessage:textMessage };
+          }
+          return member;
+        });
+  
+        return {
+          ...chat,
+          members: updatedMembers,
+          updatedAt:
+            chat.members.some((member) => member._id === recieverId)
+              ? new Date()
+              : chat.updatedAt,
+          lastMessage:chat.members.some((member) => member._id === recieverId)
+          ? textMessage
+          : chat.lastMessage,
+        };
+      });
+    });
 
     return axios
       .post(`${backendURL}/api/send-message`, {
@@ -128,16 +198,7 @@ export default function Chat() {
         message: textMessage,
       })
       .then((res) => {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            senderId: user._id,
-            recieverId,
-            chatId,
-            message: textMessage,
-          },
-        ]);
-        setTextMessage('')
+
       })
       .catch((error) => {
         console.log(error);
@@ -158,13 +219,20 @@ export default function Chat() {
       });
   };
 
+  const a = (id) =>{
+    let temp = [...notification]
+    let k = temp.filter((l)=>{return l.senderId !==id })
+    setNotifications(k)
+
+  }
+
   return (
     <div className="chatCOntianer">
       <Footer />
       <div style={{ display: "flex" }}>
         <div className="peopleContainer">
           <h2>chat users</h2>
-          {allChatUsers?.map((i) => {
+          {allChatUsers?.sort((a,b)=> new Date(b.updatedAt) - new Date(a.updatedAt) ).map((i) => {
             return i.members.map((v) => {
               return (
                 <div
@@ -174,7 +242,9 @@ export default function Chat() {
                     getMessages(i._id);
                     setChatId(i._id);
                     setRecieverId(v._id);
-                    setCurrentChat(i)
+                    setCurrentChat(i);
+                    a(v._id);
+                    setChatName(v.name)
                   }}
                 >
                   <div
@@ -186,8 +256,8 @@ export default function Chat() {
                       paddingBottom:'10px'
                     }}
                   >
-                    <img src={"profilepicture.jpg"} />
-                    {v.name} {onlineUsers.some((i)=>{return i.userId == v._id})?'online':'offline'}
+                    <div style={{position:"relative"}}><img src={"profilepicture.jpg"} />{onlineUsers.some((i)=>{return i.userId == v._id})? <div style={{height:'10px', width:'10px', borderRadius:"50%", background:"lightgreen", position:'absolute', bottom:"4px", right:'7px' }}></div>:''}</div>          
+                  <div className="unread"> <div>{v.name} <div style={{width:'5rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', fontWeight:"300"}}>{i.lastMessage} <div>{moment(i.updatedAt).format('DD/MM/YYYY')== moment().format('DD/MM/YYYY')?moment(i.updatedAt).format('h:mm a'):moment(i.updatedAt).format('DD/MM/YYYY')}</div> </div> </div> {notification.filter((l)=>{return l.senderId == v._id }).length>0 && <div  className="unreadCount">{notification.filter((l)=>{return l.senderId == v._id }).length}</div>} </div>  
                   </div>
                 </div>
               );
@@ -195,13 +265,14 @@ export default function Chat() {
           })}
         </div>
         <div className="messageContainer">
+          <h2 style={{marginTop:'0'}}>{chatName}</h2>
         <div style={{padding:'0rem 1rem', display:'flex', flexDirection:'column', gap:'1rem', height:'85vh', overflow:'auto',scrollBehavior: 'smooth'}} ref={scroll} >
             {messages.map((i)=>{
                 return(
                     <div style={i.senderId==user._id?{display:'flex', justifyContent:'end'}:{display:'flex', justifyContent:'start'}} > <div className={i.senderId==user._id?"senderMessage":'recieverMessage'}>{i.message}</div> </div>
                 )
             })}
-       { chatId && <div style={{position:'sticky', bottom:'0', textAlign:'center', display:'flex', alignItems:'center', gap:'1rem', justifyContent:'center'}}>
+       { chatId && <div style={{position:'sticky', bottom:'10px', background:"white", textAlign:'center', display:'flex', alignItems:'center', gap:'1rem', justifyContent:'center'}}>
         <input value={textMessage} style={{width:'70%', border:'2px solid black'}}  className="inputComment" type="text" onChange={(e)=>{setTextMessage(e.target.value)}} />
         <SendIcon
        

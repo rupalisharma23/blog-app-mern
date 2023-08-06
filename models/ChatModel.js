@@ -7,7 +7,11 @@ const ChatSchema = new Schema({
             type: mongoose.ObjectId,
             ref: "users"
           }
-    ]
+    ],
+    lastMessage:{
+        type:String,
+        default:''
+    }
 },{timestamps:true})
 
 module.exports = mongoose.model('chats', ChatSchema)

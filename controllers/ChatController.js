@@ -44,6 +44,7 @@ const sendMessages = async(req,res) =>{
     try{
         const {senderId, recevierId, chatId, message} = req.body
         const messageAvailable = await messages.create(req.body)
+        const chat = await chats.findOneAndUpdate({_id:chatId},{$set:{lastMessage: message}},{new:true})
         res.status(200).send({message:messageAvailable})
 
     }catch(error){

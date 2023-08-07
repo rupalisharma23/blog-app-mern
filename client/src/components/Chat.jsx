@@ -54,20 +54,26 @@ export default function Chat() {
      arrivalMessage && !currentChat?.members.some((i)=>{return i._id == arrivalMessage.senderId}) && updateUnreadCound()
   },[notification])
 
-  const updateUnreadCound = async() =>{
+  const updateUnreadCound = async(flag,id) =>{
     try{
       const unread = {}
-       allChatUsers.map((i)=>{  
-        if(notification.filter((l)=>{return l.chatId == i._id })){
-              return unread[i._id] = notification.filter((l)=>{return l.chatId == i._id }).length
-        }
-      })
+
+      if(flag && id){
+        unread[id._id] = 0
+      }
+      else{
+        allChatUsers.map((i)=>{  
+          if(notification.filter((l)=>{return l.chatId == i._id })){
+                return unread[i._id] = notification.filter((l)=>{return l.chatId == i._id }).length
+          }
+        })
+      }
 
       const response = await axios.post(`${backendURL}/api/update-unread-count`,{
-        senderId:arrivalMessage.senderId,
+        senderId: flag && id ? flag : arrivalMessage.senderId,
         recieverId:user._id,
         unread,
-        chatId:arrivalMessage.chatId
+        chatId: flag && id ? chatId : arrivalMessage.chatId,
       })
 
     }catch(error){
@@ -271,7 +277,8 @@ export default function Chat() {
                     setRecieverId(v._id);
                     setCurrentChat(i);
                     a(v._id);
-                    setChatName(v.name)
+                    setChatName(v.name);
+                    updateUnreadCound(v._id,i)
                   }}
                 >
                   <div

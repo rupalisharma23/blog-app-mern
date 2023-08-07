@@ -83,7 +83,7 @@ const updateUnreadCount = async(req,res)=>{
             return res.status(400).send({message:'chat does not exist'})
         }
 
-        const unreadCoundUpdated = await chats.findOneAndUpdate({members:{$all:[senderId,recieverId]}},{$set:{unreadCount:`${senderId}-${unread[isChatExist._id]}`}},{new:true})
+        const unreadCoundUpdated = await chats.findOneAndUpdate({members:{$all:[senderId,recieverId]}},{$set:{unreadCount:`${senderId}-${unread[isChatExist._id]}`}},{new:true, upsert: true, timestamps:false})
         res.status(200).send('unreadCountupdated')
 
     }catch(error){

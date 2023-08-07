@@ -18,11 +18,11 @@ socket.on("disconnect",()=>{
     io.emit('getOnlineUsers',onlineUsers)
 })
 
-socket.on('sendMessages',({senderId,recieverId,message})=>{
+socket.on('sendMessages',({senderId,recieverId,message,chatId})=>{
   const user = onlineUsers.find((user) => { return user.userId == recieverId} );
   if(user){
     io.to(user.socketId).emit('getMessages',{
-      senderId,message, date:new Date()
+      senderId,message, date:new Date(),chatId
     })
   }
 })

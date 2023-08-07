@@ -75,4 +75,21 @@ const getAllUsers = async(req,res)=>{
     }
 }
 
-module.exports= {createChat,findAllChatsOfOneUser,findChatOfSpecificUser,sendMessages,getMessages,getAllUsers}
+const updateUnreadCount = async(req,res)=>{
+    try{
+        const {senderId,recieverId,unread,chatId} = req.body
+        const isChatExist = await chats.findOne({members:{$all:[senderId,recieverId]}});
+        if(!isChatExist){
+            return res.status(400).send({message:'chat does not exist'})
+        }
+
+        const unreadCoundUpdated = await chats.findOneAndUpdate({members:{$all:[senderId,recieverId]}},{$set:{unreadCount:`${senderId}-${unread[isChatExist._id]}`}},{new:true})
+        res.status(200).send('unreadCountupdated')
+
+    }catch(error){
+        console.log('error in updateUnreadCount', error);
+        res.status(500).send({error})
+    }
+}
+
+module.exports= {createChat,findAllChatsOfOneUser,findChatOfSpecificUser,sendMessages,getMessages,getAllUsers,updateUnreadCount}

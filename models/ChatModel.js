@@ -11,6 +11,10 @@ const ChatSchema = new Schema({
     lastMessage:{
         type:String,
         default:''
+    },
+    unreadCount:{
+        type:String,
+        default:0
     }
 },{timestamps:true})
 

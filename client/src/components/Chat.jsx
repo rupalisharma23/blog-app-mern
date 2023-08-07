@@ -33,7 +33,8 @@ export default function Chat() {
       setArrivalMessage({
         senderId:data.senderId,
         message:data.message,
-        date:data.date
+        date:data.date,
+        chatId:data.chatId
       })
     })
     return () => {socket.off('getMessages')}; // No socket disconnect in this cleanup function
@@ -48,6 +49,31 @@ export default function Chat() {
     arrivalMessage && !currentChat?.members.some((i)=>{return i._id == arrivalMessage.senderId}) &&  setNotifications((pre)=>[...pre,arrivalMessage]) 
     arrivalMessage && updateCreatedAt()
   },[arrivalMessage])
+
+  useEffect(()=>{
+     arrivalMessage && !currentChat?.members.some((i)=>{return i._id == arrivalMessage.senderId}) && updateUnreadCound()
+  },[notification])
+
+  const updateUnreadCound = async() =>{
+    try{
+      const unread = {}
+       allChatUsers.map((i)=>{  
+        if(notification.filter((l)=>{return l.chatId == i._id })){
+              return unread[i._id] = notification.filter((l)=>{return l.chatId == i._id }).length
+        }
+      })
+
+      const response = await axios.post(`${backendURL}/api/update-unread-count`,{
+        senderId:arrivalMessage.senderId,
+        recieverId:user._id,
+        unread,
+        chatId:arrivalMessage.chatId
+      })
+
+    }catch(error){
+      console.log('error in updatedUnreadCount',error)
+    }
+  }
 
   const updateCreatedAt = () => {
     setAllChatUsers((prevAllChatUsers) => {
@@ -154,6 +180,7 @@ export default function Chat() {
       senderId: user._id,
       recieverId,
       message: textMessage,
+      chatId
     })
 
     setMessages((prevMessages) => [
@@ -257,7 +284,7 @@ export default function Chat() {
                     }}
                   >
                     <div style={{position:"relative"}}><img src={"profilepicture.jpg"} />{onlineUsers.some((i)=>{return i.userId == v._id})? <div style={{height:'10px', width:'10px', borderRadius:"50%", background:"lightgreen", position:'absolute', bottom:"4px", right:'7px' }}></div>:''}</div>          
-                  <div className="unread"> <div>{v.name} <div style={{width:'5rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', fontWeight:"300"}}>{i.lastMessage} <div>{moment(i.updatedAt).format('DD/MM/YYYY')== moment().format('DD/MM/YYYY')?moment(i.updatedAt).format('h:mm a'):moment(i.updatedAt).format('DD/MM/YYYY')}</div> </div> </div> {notification.filter((l)=>{return l.senderId == v._id }).length>0 && <div  className="unreadCount">{notification.filter((l)=>{return l.senderId == v._id }).length}</div>} </div>  
+                  <div className="unread"> <div>{v.name} <div style={{width:'5rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', fontWeight:"300"}}>{i.lastMessage} <div>{moment(i.updatedAt).format('DD/MM/YYYY')== moment().format('DD/MM/YYYY')?moment(i.updatedAt).format('h:mm a'):moment(i.updatedAt).format('DD/MM/YYYY')}</div> </div> </div> {notification.filter((l)=>{return l.senderId == v._id }).length>0 ? <div  className="unreadCount">{notification.filter((l)=>{return l.senderId == v._id }).length}</div>:i.unreadCount.split('-')[0]==v._id && i.unreadCount.split('-')[1]} </div>  
                   </div>
                 </div>
               );

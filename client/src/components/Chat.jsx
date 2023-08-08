@@ -252,11 +252,13 @@ export default function Chat() {
       });
   };
 
-  const a = (id) =>{
+  const a = (id,index) =>{
     let temp = [...notification]
+    let temp1 = [...allChatUsers]
     let k = temp.filter((l)=>{return l.senderId !==id })
+    temp1[index] = {...temp1[index],unreadCount:`${chatId}-0`}
     setNotifications(k)
-
+    setAllChatUsers(temp1)
   }
 
   return (
@@ -265,7 +267,7 @@ export default function Chat() {
       <div style={{ display: "flex" }}>
         <div className="peopleContainer">
           <h2>chat users</h2>
-          {allChatUsers?.sort((a,b)=> new Date(b.updatedAt) - new Date(a.updatedAt) ).map((i) => {
+          {allChatUsers?.sort((a,b)=> new Date(b.updatedAt) - new Date(a.updatedAt) ).map((i,index) => {
             return i.members.map((v) => {
               return (
                 <div
@@ -276,9 +278,9 @@ export default function Chat() {
                     setChatId(i._id);
                     setRecieverId(v._id);
                     setCurrentChat(i);
-                    a(v._id);
+                    a(v._id,index);
                     setChatName(v.name);
-                    updateUnreadCound(v._id,i)
+                    i.unreadCount.split('-')[1]>0 && updateUnreadCound(v._id,i)
                   }}
                 >
                   <div
@@ -291,7 +293,7 @@ export default function Chat() {
                     }}
                   >
                     <div style={{position:"relative"}}><img src={"profilepicture.jpg"} />{onlineUsers.some((i)=>{return i.userId == v._id})? <div style={{height:'10px', width:'10px', borderRadius:"50%", background:"lightgreen", position:'absolute', bottom:"4px", right:'7px' }}></div>:''}</div>          
-                  <div className="unread"> <div>{v.name} <div style={{width:'5rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', fontWeight:"300"}}>{i.lastMessage} <div>{moment(i.updatedAt).format('DD/MM/YYYY')== moment().format('DD/MM/YYYY')?moment(i.updatedAt).format('h:mm a'):moment(i.updatedAt).format('DD/MM/YYYY')}</div> </div> </div> {notification.filter((l)=>{return l.senderId == v._id }).length>0 ? <div  className="unreadCount">{notification.filter((l)=>{return l.senderId == v._id }).length}</div>:i.unreadCount.split('-')[0]==v._id && i.unreadCount.split('-')[1]} </div>  
+                  <div className="unread"> <div>{v.name} <div style={{width:'5rem', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', fontWeight:"300"}}>{i.lastMessage} <div>{moment(i.updatedAt).format('DD/MM/YYYY')== moment().format('DD/MM/YYYY')?moment(i.updatedAt).format('h:mm a'):moment(i.updatedAt).format('DD/MM/YYYY')}</div> </div> </div> {notification.filter((l)=>{return l.senderId == v._id }).length>0 ? <div  className="unreadCount">{notification.filter((l)=>{return l.senderId == v._id }).length}</div>: i.unreadCount.split('-')[1]>0 &&<div className="unreadCount">{i.unreadCount.split('-')[0]==v._id && i.unreadCount.split('-')[1]}</div>}</div>  
                   </div>
                 </div>
               );
@@ -331,8 +333,8 @@ export default function Chat() {
                       paddingBottom:'10px'
                     }}
                   >
-                    <img src={"profilepicture.jpg"} />
-                    {i.name} {onlineUsers.some((k)=>{return k.userId == i._id})?'online':'offline'}
+                    <div style={{position:'relative'}}><img src={"profilepicture.jpg"} />{onlineUsers.some((k)=>{return k.userId == i._id})? <div style={{height:'10px', width:'10px', borderRadius:"50%", background:"lightgreen", position:'absolute', bottom:"4px", right:'7px' }}></div>:''}</div>
+                    {i.name}
                   </div>
                   
               </div>

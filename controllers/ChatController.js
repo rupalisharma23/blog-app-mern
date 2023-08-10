@@ -1,5 +1,6 @@
 const chats = require('../models/ChatModel');
-const messages = require('../models/MessageModel')
+const messages = require('../models/MessageModel');
+const User = require("../models/user");
 
 const createChat = async(req,res) =>{
     try{
@@ -23,7 +24,7 @@ const createChat = async(req,res) =>{
 const findAllChatsOfOneUser = async(req,res) =>{
     try{
         const {_id} = req.params;
-        const findChat = await chats.find({members:{$in:[_id]}})
+        const findChat = await chats.find({members:{$in:[_id]}}).populate({path:'members',select:{password:0,frineds:0,follower:0, cover:0, profile:0}})
         res.status(200).send({chat:findChat})
     }
     catch(error){
@@ -43,6 +44,7 @@ const sendMessages = async(req,res) =>{
     try{
         const {senderId, recevierId, chatId, message} = req.body
         const messageAvailable = await messages.create(req.body)
+        const chat = await chats.findOneAndUpdate({_id:chatId},{$set:{lastMessage: message}},{new:true})
         res.status(200).send({message:messageAvailable})
 
     }catch(error){
@@ -62,5 +64,32 @@ const getMessages = async(req,res) =>{
     }
 }
 
+const getAllUsers = async(req,res)=>{
+    try{
+         const allUsers = await User.find({}).select({password:0,profile:0,cover:0,frineds:0,follower:0})
+         res.status(200).send({allUsers})
 
-module.exports= {createChat,findAllChatsOfOneUser,findChatOfSpecificUser,sendMessages,getMessages}
+    }catch(error){
+        console.log('error in getAllUsers',getAllUsers)
+        res.status(400).send({error})
+    }
+}
+
+const updateUnreadCount = async(req,res)=>{
+    try{
+        const {senderId,recieverId,unread,chatId} = req.body
+        const isChatExist = await chats.findOne({members:{$all:[senderId,recieverId]}});
+        if(!isChatExist){
+            return res.status(400).send({message:'chat does not exist'})
+        }
+
+        const unreadCoundUpdated = await chats.findOneAndUpdate({members:{$all:[senderId,recieverId]}},{$set:{unreadCount:`${senderId}-${unread[isChatExist._id]}`}},{new:true, upsert: true, timestamps:false})
+        res.status(200).send('unreadCountupdated')
+
+    }catch(error){
+        console.log('error in updateUnreadCount', error);
+        res.status(500).send({error})
+    }
+}
+
+module.exports= {createChat,findAllChatsOfOneUser,findChatOfSpecificUser,sendMessages,getMessages,getAllUsers,updateUnreadCount}

@@ -46,13 +46,14 @@ export default function GetAllBlogs() {
         headers: { Authorization: token },
       })
       .then((res) => {
-        setUserList(res.data.userExist);
+        setUserList({...res.data.userExist, follower: res.data.userExist.follower?.map((i)=>{return {...i,loader:false}}), frineds:res.data.userExist.frineds?.map((i)=>{return {...i,loader:false}}) });
       })
       .catch((error) => {
         toast.error(error.response.data.message);
         console.log(error);
       });
   };
+
 
   const getAllBlogController = () => {
     setMainLoader(true)
@@ -176,13 +177,13 @@ export default function GetAllBlogs() {
       });
   };
 
-  const sendUnFollowRequest = (userDetail, likeFlag) => {
+  const sendUnFollowRequest = (userDetail, likeFlag,index) => {
     return axios
       .post(
         `${backendURL}/api/unfollow-request`,
         {
           sendersId: user._id,
-          recieversId: likeFlag ? userDetail.userId : userDetail._id,
+          recieversId: likeFlag =='likes' ? userDetail.userId : userDetail._id,
         },
         {
           headers: {
@@ -202,8 +203,11 @@ export default function GetAllBlogs() {
   };
 
   const sendRequest = (userDetail, likeFlag) => {
-    let temp = users.filter((i) => { return i._id !== userDetail._id })
-    setUsers(temp)
+    let index = users.findIndex((i)=>{ return i._id == userDetail._id })
+    let a = [...users]
+    a[index] ={...a[index], loader:true}
+    // let temp = users.filter((i) => { return i._id !== userDetail._id })
+    setUsers(a)
     user.frineds.push(userDetail)
     localStorage.setItem('userId', JSON.stringify(user))
     return axios
@@ -220,6 +224,8 @@ export default function GetAllBlogs() {
         }
       )
       .then((res) => {
+      users[a] ={...users[a], loader:false}
+      setUsers(a)
         getAllBlogController();
         userProfile();
         getAllUsers();
@@ -238,13 +244,15 @@ export default function GetAllBlogs() {
             },
         })
         .then((res) => {
-            setUsers(res.data.allUsers)
+            setUsers(res.data.allUsers.map((i)=>{return {...i,loader:false}}))
         })
         .catch((error) => {
             toast.error(error.response.data.message);
             console.log(error);
         });
 };
+
+console.log(userList)
 
 
   const pre = (i) => {
@@ -336,7 +344,7 @@ export default function GetAllBlogs() {
                       navigate(`/user-profile/${user._id}`);
                     }}>{user.name}</span> 
                 </div>
-                <button className="smallButton" onClick={()=>{sendRequest(user)}}>follow</button>
+                <button className="smallButton" style={{minWidth:'100px'}} onClick={()=>{ !user.loader && sendRequest(user)}}>{user.loader? <CircularProgress style={{color:'white', height:'15px', width:'15px'}} />:'follow'}</button>
                 </div>
             )
         })}
@@ -530,7 +538,7 @@ export default function GetAllBlogs() {
           </DialogTitle>
           <DialogContent>
             <h2>Likes</h2>
-            {likesArray?.map((friend) => {
+            {likesArray?.map((friend, index) => {
               return (
                 <div className="friends_design">
                   <div
@@ -559,8 +567,8 @@ export default function GetAllBlogs() {
                         userList?.frineds.some((i) => {
                           return i._id == friend.userId;
                         })
-                          ? sendUnFollowRequest(friend, "likes")
-                          : sendRequest(friend, "likes");
+                          ? sendUnFollowRequest(friend, "likes", index)
+                          : sendRequest(friend, "likes", index);
                       }}
                       className="smallButton"
                     >
@@ -668,7 +676,7 @@ export default function GetAllBlogs() {
       <div className="blogFirstContainer followersDeactive">
         { Object.keys(userList).length>0 && <div className="blogContiner1">
            <h2>following</h2>
-          { userList?.frineds.length==0 ? <div className="card-description">no following</div>: userList?.frineds?.slice(0.5).map((friend) => {
+          { userList?.frineds.length==0 ? <div className="card-description">no following</div>: userList?.frineds?.slice(0.5).map((friend, index) => {
             return (
               <div className="friends_design">
                 <div
@@ -687,7 +695,7 @@ export default function GetAllBlogs() {
                 <button
                   className="smallButton"
                   onClick={() => {
-                    sendUnFollowRequest(friend);
+                    sendUnFollowRequest(friend,'',index);
                   }}
                 >
                   unfollow
@@ -706,7 +714,7 @@ export default function GetAllBlogs() {
             </div>
           )}
            <h2>followers</h2>
-          { userList?.follower.length==0 ? <div className="card-description">no followers</div>:  userList?.follower?.slice(0.5).map((friend) => {
+          { userList?.follower.length==0 ? <div className="card-description">no followers</div>:  userList?.follower?.slice(0.5).map((friend, index) => {
             return (
               <div className="friends_design">
                 <div
@@ -728,7 +736,7 @@ export default function GetAllBlogs() {
                     userList?.frineds.some((i) => {
                       return i._id == friend._id;
                     })
-                      ? sendUnFollowRequest(friend)
+                      ? sendUnFollowRequest(friend,'',index)
                       : sendRequest(friend);
                   }}
                   className="smallButton"
@@ -794,7 +802,7 @@ export default function GetAllBlogs() {
         </DialogTitle>
         <DialogContent>
           <h2>following</h2>
-          {userList?.frineds?.map((friend) => {
+          {userList?.frineds?.map((friend,index) => {
             return (
               <div className="friends_design">
                 <div
@@ -814,7 +822,7 @@ export default function GetAllBlogs() {
                 <button
                   className="smallButton"
                   onClick={() => {
-                    sendUnFollowRequest(friend);
+                    sendUnFollowRequest(friend,'',index);
                   }}
                 >
                   unfollow
@@ -864,7 +872,7 @@ export default function GetAllBlogs() {
         </DialogTitle>
         <DialogContent>
           <h2>followers</h2>
-          {userList?.follower?.map((friend) => {
+          {userList?.follower?.map((friend,index) => {
             return (
               <div className="friends_design">
                 <div
@@ -886,7 +894,7 @@ export default function GetAllBlogs() {
                     userList?.frineds.some((i) => {
                       return i._id == friend._id;
                     })
-                      ? sendUnFollowRequest(friend)
+                      ? sendUnFollowRequest(friend,'',index)
                       : sendRequest(friend);
                   }}
                   className="smallButton"

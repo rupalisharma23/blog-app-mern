@@ -377,6 +377,62 @@ input[type='file']::-webkit-file-upload-button{
   display: none;
 }
 
+.peopleContainer{
+  width: 30%;
+}
+
+.messageContainer{
+  width:60%;
+  margin-top: 2rem;
+}
+
+.senderMessage{
+  padding: 1rem;
+  display: flex;
+  justify-content: start;
+  background: var(--theme-blue);
+  width: fit-content;
+  border-radius:10px;
+  font-family: var(--font-medium-size);
+}
+
+.recieverMessage{
+  padding: 1rem;
+  display: flex;
+  justify-content: end;
+  background: var(--button-color-theme);
+  width: fit-content;
+  border-radius:10px;
+  font-family: var(--font-medium-size);
+}
+
+.unread{
+  display: flex;
+    justify-content: space-between;
+    width: -webkit-fill-available;
+}
+
+.unreadCount{
+  padding: 0.2rem;
+  background: lightgreen;
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+  text-align: center;
+}
+
+.hideContainer{
+  display: flex;
+}
+
+.chatActive{
+  display: none; 
+ }
+
+ .chatdeactive{
+   display: block;
+ }
+
 @media (max-width:1200px){
   .loginContiner1{
     width: 50%;
@@ -416,6 +472,10 @@ input[type='file']::-webkit-file-upload-button{
 
   .logo{
     width: 50%;
+  }
+
+  .messageContainer{
+    width: 80%;
   }
 
 }
@@ -467,10 +527,27 @@ input[type='file']::-webkit-file-upload-button{
     display: none;
   }
 
+  .chatActive{
+   display: block; 
+   width: 100%;
+  }
+
+  .chatdeactive{
+    display: none;
+  }
+
   .title-active{
     display: block;
     font-size: var(--font-xl-size);
     margin-top: 0;
+  }
+
+  .hideContainer{
+    flex-direction: column;
+  }
+
+  .messageContainer{
+    width: 100%;
   }
 }
 

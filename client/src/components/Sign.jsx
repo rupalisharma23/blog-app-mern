@@ -105,7 +105,7 @@ export default function SignIn() {
         toast.success("User created");
         localStorage.setItem("userId", JSON.stringify(res.data.newUser));
         localStorage.setItem("token", res.data.token);
-        navigate("/Blogs");
+        navigate("/allBlogs");
         document.getElementById("signInDiv").hidden = true;
       })
       .catch((error) => {
